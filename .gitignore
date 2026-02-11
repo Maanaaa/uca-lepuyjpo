@@ -1,0 +1,48 @@
+### --- Docker & OS ---
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.out
+*.log
+
+# Dossier de données MariaDB
+Docker/db/data/
+db_data/
+
+### --- Symfony (API) ---
+app/api/.env
+app/api/.env.local
+app/api/.env.dev.local
+app/api/.env.test.local
+app/api/.env.prod.local
+app/api/var/
+app/api/vendor/
+app/api/public/bundles/
+app/api/config/secrets/*.php
+# Ignorer PHPUnit et autres fichiers de cache
+app/api/.phpunit.result.cache
+
+### --- Next.js (Front) ---
+app/client/.env
+app/client/.env.local
+app/client/.env.development.local
+app/client/.env.test.local
+app/client/.env.production.local
+app/client/node_modules/
+app/client/.next/
+app/client/out/
+app/client/build/
+app/client/.vercel
+# Logs npm/yarn
+app/client/npm-debug.log*
+app/client/yarn-debug.log*
+app/client/yarn-error.log*
+
+### --- Global & Docker Config ---
+.env
+caddy_data/
+caddy_config/
+
+# Sécurité : ne jamais pusher les dossiers .git internes si présents
+**/.git

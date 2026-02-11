@@ -1,0 +1,62 @@
+services:
+  # Symfony API
+  api:
+    container_name: ${PROJECT_NAME}-api
+    build:
+      context: ..
+      dockerfile: Docker/Dockerfile
+      target: symfony_dev
+    ports:  
+      - "8000:8000" # On change pour mapper le 8000 direct
+    command: php -S 0.0.0.0:8000 -t public
+    volumes:
+      - ../app/api:/app
+    command: sh -c "composer install && php -S 0.0.0.0:8000 -t public"
+    environment:
+      DATABASE_URL: mysql://${DB_USER}:${DB_PASSWORD}@db:3306/${DB_NAME}
+    depends_on:
+      - db
+
+  # Next.js Front
+  client:
+    container_name: ${PROJECT_NAME}-next
+    build:
+      context: ..
+      dockerfile: Docker/Dockerfile
+      target: next_dev
+    ports:
+      - "${HOST_PORT_FRONT}:3000"
+    volumes:
+      - ../app/client:/app
+      - /app/node_modules
+    # On utilise npx qui va chercher le binaire là où il se trouve
+    command: sh -c "npm install && npx next dev"
+    depends_on:
+      - api
+
+  # Database
+  db:
+    container_name: ${PROJECT_NAME}-db
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${HOST_PORT_DB}:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  # Interface DB
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: ${PROJECT_NAME}-pma
+    platform: linux/amd64
+    ports:
+      - "8080:80"
+    environment:
+      - PMA_HOST=db
+
+volumes:
+  db_data:
