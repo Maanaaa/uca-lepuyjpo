@@ -9,7 +9,6 @@ services:
       - "8080:80"
     volumes:
       - ./app/api:/app
-      # --- Volumes Caddy supprimés ici ---
     environment:
       SERVER_NAME: :80
       DATABASE_URL: mysql://${DB_USER}:${DB_PASSWORD}@db:3306/${DB_NAME}?charset=utf8mb4
@@ -47,7 +46,7 @@ services:
       PMA_USER: root
       PMA_PASSWORD: ${DB_ROOT_PASSWORD}
       # Cette ligne permet d'entrer directement sans login
-      UPLOAD_LIMIT: 300M 
+      UPLOAD_LIMIT: 300M
     ports:
       - "8081:80"
     depends_on:
