@@ -34,6 +34,16 @@ class Visite
     #[ORM\Column]
     private ?int $etudiant_id = null;
 
+    #[ORM\ManyToOne(inversedBy: 'visites')]
+    private ?Visiteur $visiteur = null;
+
+    #[ORM\ManyToOne(inversedBy: 'visites')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Departement $departement = null;
+
+    #[ORM\ManyToOne(inversedBy: 'visites')]
+    private ?Etudiant $etudiant = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -107,6 +117,42 @@ class Visite
     public function setEtudiantId(int $etudiant_id): static
     {
         $this->etudiant_id = $etudiant_id;
+
+        return $this;
+    }
+
+    public function getVisiteur(): ?Visiteur
+    {
+        return $this->visiteur;
+    }
+
+    public function setVisiteur(?Visiteur $visiteur): static
+    {
+        $this->visiteur = $visiteur;
+
+        return $this;
+    }
+
+    public function getDepartement(): ?Departement
+    {
+        return $this->departement;
+    }
+
+    public function setDepartement(?Departement $departement): static
+    {
+        $this->departement = $departement;
+
+        return $this;
+    }
+
+    public function getEtudiant(): ?Etudiant
+    {
+        return $this->etudiant;
+    }
+
+    public function setEtudiant(?Etudiant $etudiant): static
+    {
+        $this->etudiant = $etudiant;
 
         return $this;
     }

@@ -21,6 +21,9 @@ class Cours
     #[ORM\Column]
     private ?int $journee_immersion_id = null;
 
+    #[ORM\ManyToOne(inversedBy: 'cours')]
+    private ?JourneeImmersion $journeeImmersion = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -46,6 +49,18 @@ class Cours
     public function setJourneeImmersionId(int $journee_immersion_id): static
     {
         $this->journee_immersion_id = $journee_immersion_id;
+
+        return $this;
+    }
+
+    public function getJourneeImmersion(): ?JourneeImmersion
+    {
+        return $this->journeeImmersion;
+    }
+
+    public function setJourneeImmersion(?JourneeImmersion $journeeImmersion): static
+    {
+        $this->journeeImmersion = $journeeImmersion;
 
         return $this;
     }
