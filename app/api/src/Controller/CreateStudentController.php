@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Controller;
 
 use App\Service\UserManager; 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class CreateStudentController extends AbstractController
 {
-    #[Route('/api/admin/create-student', name: 'app_admin_create_student', methods: ['POST'])]
+    #[Route('/api/create-student', name: 'app_admin_create_student', methods: ['POST'])]
     public function create(Request $request, UserManager $userManager): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
