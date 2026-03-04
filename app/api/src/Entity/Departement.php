@@ -47,12 +47,19 @@ class Departement
     #[ORM\OneToMany(targetEntity: Visiteur::class, mappedBy: 'departement')]
     private Collection $visiteurs;
 
+    /**
+     * @var Collection<int, Utilisateur>
+     */
+    #[ORM\OneToMany(targetEntity: Utilisateur::class, mappedBy: 'departement')]
+    private Collection $utilisateurs;
+
     public function __construct()
     {
         $this->visites = new ArrayCollection();
         $this->journeeImmersions = new ArrayCollection();
         $this->etudiants = new ArrayCollection();
         $this->visiteurs = new ArrayCollection();
+        $this->utilisateurs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -198,6 +205,36 @@ class Departement
             // set the owning side to null (unless already changed)
             if ($visiteur->getDepartement() === $this) {
                 $visiteur->setDepartement(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Utilisateur>
+     */
+    public function getUtilisateurs(): Collection
+    {
+        return $this->utilisateurs;
+    }
+
+    public function addUtilisateur(Utilisateur $utilisateur): static
+    {
+        if (!$this->utilisateurs->contains($utilisateur)) {
+            $this->utilisateurs->add($utilisateur);
+            $utilisateur->setDepartement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUtilisateur(Utilisateur $utilisateur): static
+    {
+        if ($this->utilisateurs->removeElement($utilisateur)) {
+            // set the owning side to null (unless already changed)
+            if ($utilisateur->getDepartement() === $this) {
+                $utilisateur->setDepartement(null);
             }
         }
 
