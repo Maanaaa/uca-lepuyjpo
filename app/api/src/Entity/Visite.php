@@ -6,10 +6,11 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\VisiteRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Utilisateur;
 
 #[ORM\Entity(repositoryClass: VisiteRepository::class)]
 #[ApiResource(
-    mercure: true
+    //mercure: true
 )]
 class Visite
 {
@@ -21,19 +22,19 @@ class Visite
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $debut = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTime $fin = null;
 
     #[ORM\Column(length: 255)]
     private ?string $statut = null;
 
-    #[ORM\Column]
+    #[ORM\Column (nullable: true)]
     private ?int $note = null;
 
     #[ORM\Column]
     private ?int $visiteur_id = null;
 
-    #[ORM\Column]
+    #[ORM\Column (nullable: true)]
     private ?int $etudiant_id = null;
 
     #[ORM\ManyToOne(inversedBy: 'visites')]
@@ -44,7 +45,7 @@ class Visite
     private ?Departement $departement = null;
 
     #[ORM\ManyToOne(inversedBy: 'visites')]
-    private ?Etudiant $etudiant = null;
+    private ?Utilisateur $etudiant = null;
 
     public function getId(): ?int
     {
@@ -147,15 +148,14 @@ class Visite
         return $this;
     }
 
-    public function getEtudiant(): ?Etudiant
+    public function getEtudiant(): ?Utilisateur
     {
         return $this->etudiant;
     }
 
-    public function setEtudiant(?Etudiant $etudiant): static
+    public function setEtudiant(?Utilisateur $etudiant): static 
     {
         $this->etudiant = $etudiant;
-
         return $this;
     }
 }
