@@ -13,6 +13,7 @@ use Symfony\Component\Mercure\Update;
 class VisitorManager
 {
     private $em;
+    
     private $deptRepo;
     private $userRepo; // Ajouté
     private $hub;      // Ajouté
@@ -52,13 +53,21 @@ class VisitorManager
         $visite->setVisiteur($visiteur);
         $visite->setDepartement($departement);
         $visite->setStatut('ATTENTE');
-        $visite->setDateVisite(new \DateTime()); // N'oublie pas la date !
+        
+        // CORRECTION ICI : On utilise setDebut() car c'est le nom dans ton entité
+        $visite->setDebut(new \DateTime()); 
+
+        // TRÈS IMPORTANT : Comme tes colonnes visiteur_id et etudiant_id 
+        // ne sont pas nullables dans ton entité, on doit leur donner une valeur
+        // même si on utilise déjà les objets $visiteur et $etudiant.
+        $visite->setVisiteurId(0); 
+        $visite->setEtudiantId(0);
 
         $this->em->persist($visite);
         $this->em->flush();
 
         // On lance la notification Mercure dès que l'inscription est finie
-        $this->notifyStudents($departement);
+        //$this->notifyStudents($departement);
 
         return $visite;
     }
@@ -86,5 +95,30 @@ class VisitorManager
 
         $update = new Update($topic, json_encode($payload));
         $this->hub->publish($update);
+    }
+    public function acceptVisitor(int $visiteId, int $etudiantId): Visite
+    {
+    $visite = $this->em->getRepository(Visite::class)->find($visiteId);
+    $etudiant = $this->userRepo->find($etudiantId);
+
+    if (!$visite || !$etudiant) {
+        throw new \Exception("Visite ou Étudiant non trouvé.");
+    }
+
+    if ($visite->getStatut() !== 'ATTENTE') {
+        throw new \Exception("Cette visite n'est plus en attente.");
+    }
+
+    // 1. Mise à jour de la visite
+    $visite->setStatut('EN_COURS');
+    $visite->setEtudiant($etudiant);
+    $visite->setEtudiantId($etudiant->getId());
+
+    // 2. Mise à jour de l'étudiant
+    $etudiant->setIsDisponible(false);
+
+    $this->em->flush();
+
+    return $visite;
     }
 }
