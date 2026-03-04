@@ -8,7 +8,9 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: VisiteRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    mercure: true
+)]
 class Visite
 {
     #[ORM\Id]
