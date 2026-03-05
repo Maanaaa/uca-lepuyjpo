@@ -21,6 +21,10 @@ class Cours
     #[ORM\Column]
     private ?int $journee_immersion_id = null;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Departement $departement = null;
+
     #[ORM\ManyToOne(inversedBy: 'cours')]
     private ?JourneeImmersion $journeeImmersion = null;
 
@@ -32,6 +36,18 @@ class Cours
     public function getMatiere(): ?string
     {
         return $this->matiere;
+    }
+
+
+    public function getDepartement(): ?Departement
+    {
+        return $this->departement;
+    }
+
+    public function setDepartement(?Departement $departement): self
+    {
+        $this->departement = $departement;
+        return $this;
     }
 
     public function setMatiere(string $matiere): static

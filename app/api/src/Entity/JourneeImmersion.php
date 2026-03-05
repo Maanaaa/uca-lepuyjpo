@@ -43,6 +43,11 @@ class JourneeImmersion
         return $this->id;
     }
 
+    public function __toString(): string {
+        // Ex: "MMI - 12/03/2026"
+        return $this->departement->getNom() . ' - ' . $this->date->format('d/m/Y');
+    }
+
     public function getDate(): ?\DateTime
     {
         return $this->date;
