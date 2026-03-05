@@ -1,0 +1,24 @@
+@use "variables" as*;
+
+
+// Mixin pour le Responsive (Mobile-First)
+@mixin mq($size) {
+    @media (min-width: map-get($breakpoints, $size)) {
+        @content;
+    }
+}
+
+// Mixin pour centrer en Flexbox
+@mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+// Mixin pour limiter le nombre de lignes de texte
+@mixin text-truncate($lines: 1) {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
