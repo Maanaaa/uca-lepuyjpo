@@ -1,0 +1,74 @@
+/* --- 1. RESET CSS --- */
+
+@use "../styles/base/reset";
+
+/* --- 2. STYLES DE BASE (Le "fond de teint") --- */
+body {
+  background-color: $color-secondary;
+  color: $color-text;
+  font-family: $font-base;
+  font-size: $font-size-base;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- 3. TYPOGRAPHIE --- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: $color-title;
+  font-weight: 700;
+  margin-bottom: $space-sm;
+}
+
+a {
+  color: $color-primary;
+  text-decoration: none;
+  transition: opacity 0.2s ease-in-out;
+
+  &:hover {
+    opacity: 0.8;
+    color: darken($color-primary, 10%);
+  }
+}
+
+/* --- 4. ÉLÉMENTS COMMUNS --- */
+ul,
+ol {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* --- 5. UTILITAIRES DE MISE EN PAGE --- */
+/* On utilise ici ton mixin mq() pour le container global */
+.container {
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: $space-sm;
+  padding-left: $space-sm;
+
+  @include mq('sm') {
+    max-width: 640px;
+  }
+
+  @include mq('md') {
+    max-width: 768px;
+  }
+
+  @include mq('lg') {
+    max-width: 1024px;
+  }
+
+  @include mq('xl') {
+    max-width: 1280px;
+  }
+}
