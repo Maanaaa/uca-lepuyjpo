@@ -126,4 +126,24 @@ class VisitorManager
 
         return $visite;
     }
+
+    public function getWaitingList(int $departementId): array
+    {
+        $departement = $this->deptRepo->find($departementId);
+        if (!$departement) {
+            throw new \Exception("Département introuvable");
+        }
+
+        $visites = $this->em->getRepository(\App\Entity\Visite::class)->findBy([
+            'departement' => $departement,
+            'statut' => 'ATTENTE'
+        ], ['debut' => 'ASC']);
+
+        return array_map(fn($v) => [
+            'visiteId' => $v->getId(),
+            'nom' => $v->getVisiteur()->getNom(),
+            'prenom' => $v->getVisiteur()->getPrenom(),
+            'heureArrivee' => $v->getDebut()->format('H:i')
+        ], $visites);
+    }
 }

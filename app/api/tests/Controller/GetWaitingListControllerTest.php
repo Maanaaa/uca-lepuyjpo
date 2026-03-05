@@ -6,21 +6,18 @@ use PHPUnit\Framework\TestCase;
 
 class GetWaitingListControllerTest extends TestCase
 {
-    public function testGetWaitingListStructure(): void
+    public function testGetWaitingList(): void
     {
+        // On tape sur ton serveur Docker (port 8080)
         $url = 'http://localhost:8080/api/visites/waiting/3';
         
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        $response = @file_get_contents($url);
+        $status = $http_response_header[0] ?? 'HTTP/1.1 404 Not Found';
 
-        $this->assertEquals(200, $httpCode, "L'API doit répondre 200 OK");
+        // Ça doit échouer ici car la route n'existe pas encore
+        $this->assertStringContainsString('200', $status, "L'API devrait répondre 200 OK");
         
-        $content = json_decode($response, true);
-        $this->assertIsArray($content, "La réponse doit être un tableau JSON");
+        $data = json_decode($response, true);
+        $this->assertIsArray($data);
     }
 }
