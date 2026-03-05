@@ -34,10 +34,9 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Structure');
         // NOUVEAUTÉ V5 : On utilise linkTo() avec le Controller
         yield MenuItem::linkTo(DepartementCrudController::class, 'Départements', 'fa fa-building');
-        yield MenuItem::linkTo(UtilisateurCrudController::class, 'Étudiants', 'fa fa-users');
         yield MenuItem::linkTo(CoursCrudController::class, 'Cours', 'fa fa-book');
         yield MenuItem::linkTo(JourneeImmersionCrudController::class, "Journées d'imersion", 'fa fa-calendar');
-
+        yield MenuItem::linkTo(UtilisateurCrudController::class, "Utilisateurs", 'fa fa-user');
         yield MenuItem::section('Flux');
         yield MenuItem::linkTo(VisiteurCrudController::class, 'Visiteurs', 'fa fa-user');
         yield MenuItem::linkTo(VisiteCrudController::class, 'Visites', 'fa fa-clock');

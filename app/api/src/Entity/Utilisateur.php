@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UtilisateurRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -16,9 +18,9 @@ use ApiPlatform\Metadata\Patch;
 #[ApiResource(
     operations: [
         new GetCollection(security: "is_granted('ROLE_ADMIN')"),
-        new Post(security: "is_granted('ROLE_ADMIN')"), // Seul l'admin crée les comptes
+        new Post(security: "is_granted('ROLE_ADMIN')"),
         new Get(security: "is_granted('ROLE_USER')"),
-        new Patch(security: "is_granted('ROLE_USER') and object == user") // L'étudiant peut modifier son propre statut
+        new Patch(security: "is_granted('ROLE_USER') and object == user")
     ]
 )]
 class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
@@ -34,7 +36,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    // Passage en type JSON pour accepter les tableaux de rôles
     #[ORM\Column(type: 'json')]
     private array $roles = [];
 
@@ -49,6 +50,14 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private ?bool $isDisponible = null;
+
+    #[ORM\OneToMany(targetEntity: Visite::class, mappedBy: 'etudiant')]
+    private Collection $visites;
+
+    public function __construct()
+    {
+        $this->visites = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -66,7 +75,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    // Identifiant unique pour la sécurité Symfony
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
@@ -83,11 +91,10 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    // Retourne un tableau de rôles (obligatoire pour UserInterface)
     public function getRoles(): array
     {
         $roles = $this->roles;
-        $roles[] = 'ROLE_USER'; // Garantit au moins ce rôle
+        $roles[] = 'ROLE_USER';
         return array_unique($roles);
     }
 
@@ -99,7 +106,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials(): void
     {
-        // Utile si tu stockes des données sensibles temporaires
     }
 
     public function getNom(): ?string
@@ -132,7 +138,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setDepartement(?Departement $departement): static
     {
         $this->departement = $departement;
-
         return $this;
     }
 
@@ -144,7 +149,35 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsDisponible(bool $isDisponible): static
     {
         $this->isDisponible = $isDisponible;
-
         return $this;
+    }
+
+    public function getVisites(): Collection
+    {
+        return $this->visites;
+    }
+
+    public function addVisite(Visite $visite): static
+    {
+        if (!$this->visites->contains($visite)) {
+            $this->visites->add($visite);
+            $visite->setEtudiant($this);
+        }
+        return $this;
+    }
+
+    public function removeVisite(Visite $visite): static
+    {
+        if ($this->visites->removeElement($visite)) {
+            if ($visite->getEtudiant() === $this) {
+                $visite->setEtudiant(null);
+            }
+        }
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->prenom . ' ' . $this->nom;
     }
 }
