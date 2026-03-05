@@ -9,7 +9,7 @@ class GetWaitingListControllerTest extends TestCase
     public function testGetWaitingList(): void
     {
         // On tape sur ton serveur Docker (port 8080)
-        $url = 'http://localhost:8080/api/visites/waiting/3';
+        $url = 'http://localhost/api/visites/waiting/3';
         
         $response = @file_get_contents($url);
         $status = $http_response_header[0] ?? 'HTTP/1.1 404 Not Found';

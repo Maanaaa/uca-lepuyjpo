@@ -134,11 +134,13 @@ class VisitorManager
             throw new \Exception("Département introuvable");
         }
 
+        // On récupère les visites en attente (ordonnées par heure d'arrivée)
         $visites = $this->em->getRepository(\App\Entity\Visite::class)->findBy([
             'departement' => $departement,
             'statut' => 'ATTENTE'
         ], ['debut' => 'ASC']);
 
+        // On formate pour le binôme Next.js
         return array_map(fn($v) => [
             'visiteId' => $v->getId(),
             'nom' => $v->getVisiteur()->getNom(),
