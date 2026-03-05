@@ -2,21 +2,25 @@
 
 namespace App\Tests\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use PHPUnit\Framework\TestCase;
 
-class GetWaitingListControllerTest extends WebTestCase
+class GetWaitingListControllerTest extends TestCase
 {
     public function testGetWaitingListStructure(): void
     {
-        $client = static::createClient(['environment' => 'dev']);
+        $url = 'http://localhost:8080/api/visites/waiting/3';
         
-        $client->request('GET', '/api/visites/waiting/3');
-
-        $this->assertResponseIsSuccessful();
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
         
-        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
 
-        $content = json_decode($client->getResponse()->getContent(), true);
-        $this->assertIsArray($content);
+        $this->assertEquals(200, $httpCode, "L'API doit répondre 200 OK");
+        
+        $content = json_decode($response, true);
+        $this->assertIsArray($content, "La réponse doit être un tableau JSON");
     }
 }
