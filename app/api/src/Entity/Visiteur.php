@@ -45,6 +45,10 @@ class Visiteur
     #[ORM\JoinColumn(nullable: false)]
     private ?Departement $departement = null;
 
+    public function __toString(): string {
+        return $this->prenom . ' ' . $this->nom;
+    }
+
     public function __construct()
     {
         $this->visites = new ArrayCollection();
