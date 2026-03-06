@@ -4,11 +4,10 @@ namespace App\Controller\Admin;
 
 use App\Entity\JourneeImmersion;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+
 
 class JourneeImmersionCrudController extends AbstractFilterableCrudController
 {
@@ -17,25 +16,30 @@ class JourneeImmersionCrudController extends AbstractFilterableCrudController
         return JourneeImmersion::class;
     }
 
+    public function configureCrud(Crud $crud): Crud
+    {
+    return $crud
+        ->setEntityLabelInPlural('Journées d\'immersion')
+        ->setEntityLabelInSingular('Journée d\'immersion')
+
+        ->setPageTitle('index', 'Gestion des %entity_label_plural%')
+        ->setPageTitle('new', 'Créer une %entity_label_singular%');
+    }
+
     public function configureFields(string $pageName): iterable
     {
-        // On affiche l'ID uniquement sur la page liste (Index)
         yield IdField::new('id')->hideOnForm();
         
-        yield TextField::new('titre', 'Nom de la journée');
-        
-        yield DateTimeField::new('dateDebut', 'Début de l\'immersion');
-        
-        yield IntegerField::new('capacite', 'Nombre de places');
+        yield DateField::new('date', 'Date de la journée');
 
+        // affichage du département selon le rôle
         if ($this->isGranted('ROLE_SUPER_ADMIN')) {
-            yield AssociationField::new('departement', 'Département concerné')
-                ->setRequired(true);
+            yield AssociationField::new('departement', 'Département rattaché');
         } else {
+            // Pour l'admin de département, on peut l'afficher en lecture seule
             yield AssociationField::new('departement')
-                ->hideOnForm();
+                ->setFormTypeOption('disabled', true)
+                ->hideOnForm(); 
         }
-
-        yield TextEditorField::new('description')->hideOnIndex();
     }
 }

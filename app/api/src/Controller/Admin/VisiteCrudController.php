@@ -13,6 +13,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 
 
 class VisiteCrudController extends AbstractFilterableCrudController
@@ -44,14 +47,29 @@ class VisiteCrudController extends AbstractFilterableCrudController
         return $this->redirect($url);
     }
 
-    /*
     public function configureFields(string $pageName): iterable
     {
-        return [
-            IdField::new('id'),
-            TextField::new('title'),
-            TextEditorField::new('description'),
-        ];
+        yield IdField::new('id')->hideOnForm();
+        
+
+        yield AssociationField::new('visiteur', 'Visiteur');
+        
+        // Relation avec l'étudiant qui fait la visite
+        yield AssociationField::new('etudiant', 'Étudiant Guide');
+
+        yield ChoiceField::new('statut')->setChoices([
+            'En attente' => 'ATTENTE',
+            'En cours' => 'EN_COURS',
+            'Terminé' => 'TERMINE',
+        ]);
+
+        yield DateTimeField::new('heureArrivee', 'Arrivée');
+
+        // Ajout du département rattaché
+        if ($this->isGranted('ROLE_SUPER_ADMIN')) {
+            yield AssociationField::new('departement', 'Département');
+        } else {
+            yield AssociationField::new('departement')->hideOnForm();
+        }
     }
-    */
 }
