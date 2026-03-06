@@ -2,7 +2,6 @@
 
 namespace App\Security;
 
-use App\Entity\Utilisateur;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,17 +28,17 @@ class AppCustomAuthenticator extends AbstractLoginFormAuthenticator
 
     public function authenticate(Request $request): Passport
     {
-        $email = $request->request->get('email', '');
+        // On récupère exactement ce qui est tapé, sans modif
+        $identifier = $request->request->get('email', '');
         $password = $request->request->get('password', '');
-        $csrfToken = $request->request->get('_csrf_token', '');
 
-        $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $email);
+        $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $identifier);
 
         return new Passport(
-            new UserBadge($email),
+            new UserBadge($identifier),
             new PasswordCredentials($password),
             [
-                new CsrfTokenBadge('authenticate', $csrfToken),
+                new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
                 new RememberMeBadge(),
             ]
         );
@@ -53,12 +52,11 @@ class AppCustomAuthenticator extends AbstractLoginFormAuthenticator
 
         $user = $token->getUser();
         
-        // Si l'utilisateur a ROLE_DEPT_ADMIN OU ROLE_SUPER_ADMIN
+        // Redirection simple : Admin vers panel, reste vers dashboard étudiant
         if (in_array('ROLE_DEPT_ADMIN', $user->getRoles()) || in_array('ROLE_SUPER_ADMIN', $user->getRoles())) {
             return new RedirectResponse($this->urlGenerator->generate('admin'));
         }
 
-        // Sinon, c'est un étudiant (ROLE_USER)
         return new RedirectResponse($this->urlGenerator->generate('app_student_dashboard'));
     }
 

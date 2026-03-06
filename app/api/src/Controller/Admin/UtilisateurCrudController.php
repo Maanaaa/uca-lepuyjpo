@@ -41,39 +41,36 @@ class UtilisateurCrudController extends AbstractFilterableCrudController
                 'Super Administrateur' => 'ROLE_SUPER_ADMIN',
             ]);
 
-        yield TextField::new('password', 'Mot de passe (Admin uniquement)')
+        yield TextField::new('password', 'Mot de passe')
             ->onlyOnForms()
-            ->setRequired(false)
-            ->setHelp('Laissez vide pour un étudiant (connexion prenom.nom)');
-    }
-
-    public function createEntity(string $entityFqcn): Utilisateur
-    {
-        $user = new Utilisateur();
-        /** @var Utilisateur $currentUser */
-        $currentUser = $this->getUser();
-
-        if ($currentUser && !in_array('ROLE_SUPER_ADMIN', $currentUser->getRoles())) {
-            $user->setIsDisponible(true); 
-            $user->setDepartement($currentUser->getDepartement());
-        }
-
-        return $user;
+            // On ne le rend obligatoire qu'à la création, pas à l'édition
+            ->setRequired($pageName === 'new');
     }
 
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
-    {
-        if ($entityInstance instanceof Utilisateur) {
-            if (!$entityInstance->getPassword()) {
-                $plainPassword = strtolower($entityInstance->getPrenom() . '.' . $entityInstance->getNom());
-            } else {
-                $plainPassword = $entityInstance->getPassword();
+        {
+            if ($entityInstance instanceof Utilisateur) {
+                $this->hashPassword($entityInstance);
             }
-
-            $hashedPassword = $this->passwordHasher->hashPassword($entityInstance, $plainPassword);
-            $entityInstance->setPassword($hashedPassword);
+            parent::persistEntity($entityManager, $entityInstance);
         }
 
-        parent::persistEntity($entityManager, $entityInstance);
-    }
+        public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+        {
+            if ($entityInstance instanceof Utilisateur) {
+                $this->hashPassword($entityInstance);
+            }
+            parent::updateEntity($entityManager, $entityInstance);
+        }
+
+        private function hashPassword(Utilisateur $user): void
+        {
+            $plainPassword = $user->getPassword();
+            // On ne hache que si un mot de passe a été saisi
+            if (!empty($plainPassword)) {
+                $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
+                $user->setPassword($hashedPassword);
+            }
+        }
+
 }

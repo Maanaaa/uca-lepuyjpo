@@ -12,14 +12,13 @@
         <h1 class="h3 mb-3 font-weight-normal">Connexion JPO</h1>
         
         <div class="mb-3">
-            <label for="inputEmail">Identifiant (prenom.nom ou email)</label>
+            <label for="inputEmail">Identifiant</label>
             <input type="text" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" required autofocus>
         </div>
 
         <div class="mb-3">
-            <label for="inputPassword">Mot de passe (Admins uniquement)</label>
-            <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password">
-            <small class="text-muted">Étudiants : laissez vide pour vous connecter avec votre identifiant.</small>
+            <label for="inputPassword">Mot de passe</label>
+            <input type="password" name="password" id="inputPassword" class="form-control" required>
         </div>
 
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
