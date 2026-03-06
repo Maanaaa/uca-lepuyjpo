@@ -8,7 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TimeField;
 
-class CoursCrudController extends AbstractCrudController
+class CoursCrudController extends AbstractFilterableCrudController
 {
     public static function getEntityFqcn(): string
     {

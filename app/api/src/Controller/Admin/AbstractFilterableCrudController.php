@@ -34,4 +34,20 @@ abstract class AbstractFilterableCrudController extends AbstractCrudController
     {
         parent::persistEntity($entityManager, $entityInstance);
     }
+
+    public function createEntity(string $entityFqcn): object
+    {
+        $entity = new $entityFqcn();
+        /** @var Utilisateur|null $user */
+        $user = $this->getUser();
+
+        if ($user && !in_array('ROLE_SUPER_ADMIN', $user->getRoles())) {
+            if (method_exists($entity, 'setDepartement')) {
+                $entity->setDepartement($user->getDepartement());
+            }
+        }
+
+        return $entity;
+    }
+
 }

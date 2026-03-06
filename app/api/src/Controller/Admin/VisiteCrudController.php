@@ -15,7 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
 
 
-class VisiteCrudController extends AbstractCrudController
+class VisiteCrudController extends AbstractFilterableCrudController
 {
     public static function getEntityFqcn(): string
     {
