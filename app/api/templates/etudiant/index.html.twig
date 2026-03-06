@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Statut{% endblock %}
+
+{% block body %}
+<div class="container mt-5 text-center">
+    <h1>Bonjour {{ app.user.prenom }}</h1>
+    <p>Département : {{ app.user.departement ? app.user.departement.nom : 'Non assigné' }}</p>
+
+    <div class="card mb-4 {{ app.user.isDisponible ? 'bg-success' : 'bg-danger' }} text-white">
+        <div class="card-body">
+            <h2>Statut actuel : {{ app.user.isDisponible ? 'DISPONIBLE' : 'OCCUPÉ' }}</h2>
+        </div>
+    </div>
+
+    <form action="{{ path('app_student_toggle_status') }}" method="post">
+        <button type="submit" class="btn btn-primary btn-lg">
+            Changer mon statut
+        </button>
+    </form>
+
+    <div class="mt-4">
+        <a href="{{ path('app_logout') }}" class="text-muted">Déconnexion</a>
+    </div>
+</div>
+{% endblock %}

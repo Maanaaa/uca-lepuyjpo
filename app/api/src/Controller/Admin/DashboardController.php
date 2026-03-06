@@ -12,13 +12,20 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\HttpFoundation\Response;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
+    #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
-        return parent::index();
+        // On récupère le générateur d'URL d'EasyAdmin
+        $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
+
+        // On redirige direct vers le CRUD des Utilisateurs
+        return $this->redirect($adminUrlGenerator->setController(UtilisateurCrudController::class)->generateUrl());
     }
 
     public function configureDashboard(): Dashboard
@@ -32,7 +39,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Accueil', 'fa fa-home');
 
         yield MenuItem::section('Structure');
-        // NOUVEAUTÉ V5 : On utilise linkTo() avec le Controller
         yield MenuItem::linkTo(DepartementCrudController::class, 'Départements', 'fa fa-building');
         yield MenuItem::linkTo(CoursCrudController::class, 'Cours', 'fa fa-book');
         yield MenuItem::linkTo(JourneeImmersionCrudController::class, "Journées d'imersion", 'fa fa-calendar');
