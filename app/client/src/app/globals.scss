@@ -2,7 +2,7 @@
 
 @use "../styles/base/reset";
 
-/* --- 2. STYLES DE BASE (Le "fond de teint") --- */
+/* --- 2. STYLES DE BASE --- */
 body {
   background-color: $color-secondary;
   color: $color-text;
@@ -48,7 +48,7 @@ img {
 }
 
 /* --- 5. UTILITAIRES DE MISE EN PAGE --- */
-/* On utilise ici ton mixin mq() pour le container global */
+/* On utilise le mixin mq() pour le container global */
 .container {
   width: 100%;
   margin-right: auto;
