@@ -1,37 +1,24 @@
+@use "../../../styles/abstracts/index" as*;
+
 .footer {
     width: 100%;
-    margin-top: auto; // Pousse le footer en bas si la page est vide
+    background-image: url('/assets/footer_form.svg');
+    background-size: cover;
+    background-position: top center;
+
+    min-height: 180px;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: $space-md;
 
-    // On met la couleur primaire ici pour que le 'currentColor' du SVG l'utilise
-    color: $color-primary;
+    align-items: flex-end;
 
-    .waveContainer {
-        line-height: 0; // Retire l'espace sous le SVG
-        width: 100%;
-
-        svg {
-            width: 100%;
-            height: 60px; // Hauteur de la vague
-            display: block;
-        }
-    }
-
-    .content {
-        background-color: $color-primary;
+    .text {
         color: $color-white;
+        font-family: $font-secondary;
+        font-size: $font-size-secondary;
+        font-weight: 400;
         text-align: center;
-        padding: $space-sm 0 $space-md;
-
-        p {
-            font-size: 0.75rem;
-            font-weight: 400;
-            opacity: 0.9;
-
-            @include mq('md') {
-                font-size: 0.85rem;
-            }
-        }
     }
 }
