@@ -29,14 +29,14 @@ export default function HomePage() {
     <div className={styles.mainContainer}>
       <header className={styles.header}>
         <div className={styles.logoPlaceholder}>
-          <img src="/assets/images/logo_uca.png" alt="Logo UCA" />
+          <img src="/assets/images/logo_UCA_long.webp" alt="Logo UCA" />
         </div>
       </header>
 
       <main className="container">
         <section className={styles.heroSection}>
           <h1 className={styles.mainTitle}>Journées Portes Ouvertes</h1>
-          <p className={styles.mainSubtitle}>IUT Clermont Auvergne - Université Clermont Auvergne - Réalisé par les étudiants de l'IUT du Puy-en-Velay.</p>
+          <p className={styles.mainSubtitle}>IUT Clermont Auvergne - Site du Puy-en-Velay.</p>
         </section>
 
         <div className={styles.buttonGrid}>

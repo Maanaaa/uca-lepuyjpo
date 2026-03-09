@@ -3,14 +3,32 @@
 @use "../styles/base/reset";
 
 /* --- 2. STYLES DE BASE --- */
+html,
 body {
-  background-color: $color-secondary;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+
+  /* Scroll autorisé sur mobile */
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  /* Scroll bloqué sur pc */
+  @include mq('lg') {
+    overflow: hidden;
+  }
+}
+
+body {
+  background-color: $color-background;
   color: $color-text;
   font-family: $font-base;
   font-size: $font-size-base;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  flex-direction: column;
 }
 
 /* --- 3. TYPOGRAPHIE --- */
@@ -48,7 +66,6 @@ img {
 }
 
 /* --- 5. UTILITAIRES DE MISE EN PAGE --- */
-/* On utilise le mixin mq() pour le container global */
 .container {
   width: 100%;
   margin-right: auto;
@@ -71,4 +88,42 @@ img {
   @include mq('xl') {
     max-width: 1280px;
   }
+}
+
+/* --- 6. LIGNE DRAPEAU FR --- */
+.fr-flag-line {
+  height: 4px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+
+  background: linear-gradient(to right,
+      #002153 33.33%, // Bleu
+      #ffffff 33.33%, // Blanc
+      #ffffff 66.66%,
+      #e1000f 66.66% // Rouge
+    );
+}
+
+.main-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  /* On laisse la page s'étirer selon le contenu */
+  min-height: 100vh;
+
+  /* Sur pc on force la hauteur à 100% de l'écran */
+  @include mq('lg') {
+    height: 100vh;
+  }
+}
+
+// Étire le conteneur et pousse le footer.
+.content-grow {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }

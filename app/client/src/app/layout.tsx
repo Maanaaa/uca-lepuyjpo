@@ -7,8 +7,14 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body>
-        {children}
-        <Footer />
+        <div className="fr-flag-line" />
+
+        <div className="main-wrapper">
+          <main className="content-grow">
+            {children}
+          </main>
+          <Footer />
+        </div>
       </body>
     </html>
   );

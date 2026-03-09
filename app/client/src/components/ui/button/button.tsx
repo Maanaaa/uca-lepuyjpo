@@ -1,5 +1,5 @@
 import { LucideIcon } from 'lucide-react';
-import styles from './Button.module.scss';
+import styles from './button.module.scss';
 
 interface ButtonProps {
     title: string;
@@ -18,7 +18,7 @@ const Button = ({ title, description, subtitle, Icon, onClick }: ButtonProps) =>
             <div className={styles.textContainer}>
                 <h3 className={styles.title}>{title}</h3>
                 <p className={styles.description}>{description}</p>
-                <span className={styles.platformsubtitle}>{subtitle}</span>
+                <span className={styles.platformSubtitle}>{subtitle}</span>
             </div>
         </button>
     );
