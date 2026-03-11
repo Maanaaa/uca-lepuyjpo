@@ -3,35 +3,180 @@
 {% block title %}Connexion{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <form method="post">
-        {% if error %}
-            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-        {% endif %}
+<style>
+    :root {
+        --iut-teal: #006B7D; /* Couleur officielle IUT */
+        --iut-dark-teal: #005664;
+        --soft-bg: #F0F2F5;
+        --border-radius: 12px;
+    }
 
-        <h1 class="h3 mb-3 font-weight-normal">Connexion JPO</h1>
-        
-        <div class="mb-3">
-            <label for="inputEmail">Identifiant</label>
-            <input type="text" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" required autofocus>
+    /* Fond de page bicolore */
+    body {
+        background-color: var(--soft-bg);
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    .main-wrapper {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Carte de connexion style maquette */
+    .login-card {
+        background: #ffffff;
+        width: 100%;
+        max-width: 450px;
+        padding: 40px;
+        border-radius: var(--border-radius);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        color: #6c757d;
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+        transition: color 0.2s;
+    }
+
+    .back-link:hover { color: var(--iut-teal); }
+
+    .login-title {
+        font-weight: 700;
+        font-size: 1.75rem;
+        color: #1a1a1a;
+        margin-bottom: 0.5rem;
+    }
+
+    .login-subtitle {
+        color: #6c757d;
+        margin-bottom: 2rem;
+    }
+
+    /* Champs de formulaire */
+    .form-label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #444;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        background-color: #f9f9f9;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 12px 15px;
+        transition: all 0.2s;
+    }
+
+    .form-control:focus {
+        border-color: var(--iut-teal);
+        box-shadow: 0 0 0 3px rgba(0, 107, 125, 0.1);
+        background-color: #fff;
+    }
+
+    /* Bouton principal */
+    .btn-connexion {
+        background-color: var(--iut-teal);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 14px;
+        font-weight: 600;
+        width: 100%;
+        margin-top: 1rem;
+        transition: background 0.2s;
+    }
+
+    .btn-connexion:hover {
+        background-color: var(--iut-dark-teal);
+    }
+
+    /* Décoration du bas (Vague) */
+    .wave-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 150px;
+        background-color: var(--iut-teal);
+        clip-path: ellipse(80% 100% at 50% 100%);
+        z-index: 0;
+    }
+
+    /* Footer institutionnel */
+    footer {
+        position: fixed;
+        bottom: 20px;
+        width: 100%;
+        text-align: center;
+        color: white;
+        z-index: 2;
+        font-size: 0.85rem;
+    }
+</style>
+
+<div class="main-wrapper">
+    <div class="content-container">
+        <a href="/" class="back-link">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 8px;">
+                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+            </svg>
+            Retour
+        </a>
+
+        <div class="login-card">
+            <h1 class="login-title">Connexion — JPO</h1>
+            <p class="login-subtitle">Entrez vos identifiants pour continuer</p>
+
+            <form method="post">
+                {% if error %}
+                    <div class="alert alert-danger py-2" style="font-size: 0.9rem;">
+                        {{ error.messageKey|trans(error.messageData, 'security') }}
+                    </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label for="inputEmail" class="form-label">Identifiant</label>
+                    <input type="text" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" placeholder="votre@email.fr" required autofocus>
+                </div>
+
+                <div class="mb-4">
+                    <label for="inputPassword" class="form-label">Mot de passe</label>
+                    <input type="password" name="password" id="inputPassword" class="form-control" placeholder="••••••••" required>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <div class="d-flex align-items-center mb-4">
+                    <input type="checkbox" name="_remember_me" id="_remember_me" class="form-check-input me-2" style="cursor: pointer;">
+                    <label class="form-check-label text-muted mb-0" for="_remember_me" style="font-size: 0.9rem; cursor: pointer;">
+                        Se souvenir de moi
+                    </label>
+                </div>
+
+                <button class="btn btn-connexion" type="submit">
+                    Se connecter
+                </button>
+            </form>
         </div>
-
-        <div class="mb-3">
-            <label for="inputPassword">Mot de passe</label>
-            <input type="password" name="password" id="inputPassword" class="form-control" required>
-        </div>
-
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-        <div class="checkbox mb-3">
-            <label>
-                <input type="checkbox" name="_remember_me"> Se souvenir de moi
-            </label>
-        </div>
-
-        <button class="btn btn-lg btn-primary" type="submit">
-            Se connecter
-        </button>
-    </form>
+    </div>
 </div>
+
+<div class="wave-container"></div>
+<footer>
+    © 2026 IUT Clermont Auvergne - Tous droits réservés
+</footer>
 {% endblock %}
