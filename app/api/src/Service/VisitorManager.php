@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Mercure\HubInterface;
 use Minishlink\WebPush\WebPush;
 use Minishlink\WebPush\Subscription;
+use App\Service\QrCodeGenerator; 
 
 class VisitorManager
 {
@@ -18,20 +19,23 @@ class VisitorManager
     private $deptRepo;
     private $userRepo;
     private $hub;
+    private $qrCodeGenerator; 
 
     public function __construct(
         EntityManagerInterface $em,
         DepartementRepository $deptRepo,
         UtilisateurRepository $userRepo,
-        HubInterface $hub
+        HubInterface $hub,
+        QrCodeGenerator $qrCodeGenerator 
     ) {
         $this->em = $em;
         $this->deptRepo = $deptRepo;
         $this->userRepo = $userRepo;
         $this->hub = $hub;
+        $this->qrCodeGenerator = $qrCodeGenerator; 
     }
 
-    public function createFullRegistration(array $data): Visite
+    public function createFullRegistration(array $data): array // Changé en array pour inclure la visite + le QR
     {
         $deptId = $data['departementId'] ?? $data['departement_id'] ?? null;
         $departement = $this->deptRepo->find($deptId);
@@ -40,7 +44,6 @@ class VisitorManager
             throw new \Exception("Département introuvable");
         }
 
-        // 1. Création du Visiteur
         $visiteur = new Visiteur();
         $visiteur->setNom($data['nom'] ?? 'Anonyme');
         $visiteur->setPrenom($data['prenom'] ?? '');
@@ -52,26 +55,33 @@ class VisitorManager
 
         $this->em->persist($visiteur);
 
-        // 2. Création de la Visite
         $visite = new Visite();
         $visite->setVisiteur($visiteur);
         $visite->setDepartement($departement);
         $visite->setStatut('ATTENTE');
         $visite->setDebut(new \DateTime());
 
-        // --- LES LIGNES setVisiteurId(0) et setEtudiantId(0) ONT ÉTÉ SUPPRIMÉES ICI ---
-
         $this->em->persist($visite);
         $this->em->flush();
 
-        // 3. Notification
         try {
             $this->notifyStudents($visite);
         } catch (\Exception $e) {
-            // Log l'erreur si nécessaire mais ne bloque pas le retour
+            // Silence
         }
 
-        return $visite;
+        $qrCodeUri = $this->qrCodeGenerator->generateUri([
+            'id' => $visiteur->getId(),
+            'nom' => $visiteur->getNom(),
+            'prenom' => $visiteur->getPrenom(),
+            'email' => $visiteur->getEmail(),
+        ]);
+
+        // On retourne tout au contrôleur
+        return [
+            'visite' => $visite,
+            'qrCode' => $qrCodeUri
+        ];
     }
 
     public function notifyStudents(Visite $visite): void
