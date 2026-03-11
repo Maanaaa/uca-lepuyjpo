@@ -49,6 +49,16 @@
     }
 }
 
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-sm;
+
+    @include mq('lg') {
+        display: contents;
+    }
+}
+
 .submitBtn {
     width: 100%;
     background-color: $color-primary;

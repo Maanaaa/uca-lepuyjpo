@@ -4,7 +4,7 @@ import { useState } from 'react';
 import InputField from '@/components/ui/forms/inputfield/inputfield';
 import SelectField from '@/components/ui/forms/selectfield/selectfield';
 import { COUNTRIES, DEPARTMENTS } from '@/constants/location';
-import styles from './inscription.module.scss';
+import styles from './inscription_info.module.scss';
 
 export default function InscriptionPage() {
 
@@ -15,13 +15,13 @@ export default function InscriptionPage() {
         <div className={styles.mainContainer}>
             <main className="container">
                 <div className={styles.formCard}>
-                    <h1 className={styles.title}>Inscription MMI</h1>
+                    <h1 className={styles.title}>Inscription Informatique</h1>
                     <p className={styles.subtitle}>Remplissez vos coordonnées pour continuer</p>
 
                     <form className={styles.form}>
 
-                        <InputField label="Nom" name="lastname" placeholder="Ex: POPOFF" />
-                        <InputField label="Prénom" name="firstname" placeholder="Ex: Evann" />
+                        <InputField label="Nom" name="lastname" placeholder="Ex: MANYA" />
+                        <InputField label="Prénom" name="firstname" placeholder="Ex: Théo" />
 
                         <InputField label="Adresse Email" type="email" name="email" placeholder="jean.dupont@example.com" />
                         <InputField label="Numéro de téléphone" type="tel" name="phone" placeholder="06 01 02 03 04" />
