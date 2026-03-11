@@ -18,7 +18,7 @@ export default function HomePage() {
             icon: FlaskConical
         },
         {
-            title: "Informatique",
+            title: "Informatique Graphique",
             desc: "Sciences Informatiques",
             subtitle: "",
             icon: CodeXml

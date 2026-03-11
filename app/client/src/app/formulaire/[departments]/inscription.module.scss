@@ -50,12 +50,19 @@
 }
 
 .row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: $space-sm;
+    display: flex;
+    flex-direction: column;
 
     @include mq('lg') {
         display: contents;
+    }
+
+    .emptySpace {
+        display: none;
+
+        @include mq('lg') {
+            display: block;
+        }
     }
 }
 
@@ -73,5 +80,9 @@
         grid-column: span 2;
         max-width: 280px;
         margin: $space-sm auto 0 auto;
+    }
+
+    &:hover {
+        opacity: 0.9;
     }
 }
