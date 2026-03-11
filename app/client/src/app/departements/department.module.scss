@@ -1,21 +1,29 @@
 .mainContainer {
-    padding-top: $space-md;
-    padding-bottom: $space-xs;
-    flex: 1;
-    display: flex;
+    @include flex-center;
     flex-direction: column;
-    justify-content: center;
-
+    padding: $space-md;
+    min-height: 100vh;
+    position: relative;
+    background-color: $color-background;
 }
 
 .header {
-    display: flex;
-    justify-content: center;
+    @include flex-center;
     margin-bottom: $space-md;
 
+    padding-top: 60px;
+
     img {
-        max-width: 350px;
+        max-width: 280px;
         height: auto;
+    }
+
+    @include mq('md') {
+        padding-top: 0;
+
+        img {
+            max-width: 350px;
+        }
     }
 }
 
@@ -24,23 +32,33 @@
     margin-bottom: $space-md;
 
     .mainTitle {
-        font-size: 2rem;
+        font-family: $font-secondary;
         font-weight: 800;
         color: $color-title;
         margin-bottom: 4px;
-        font-family: $font-secondary;
+
+        font-size: 1.5rem;
+
+        @include mq('md') {
+            font-size: 2rem;
+        }
     }
 
     .mainSubtitle {
         color: $color-gray;
-        font-size: 1.1rem;
         font-family: $font-secondary;
+        font-size: 1rem;
+
+        @include mq('md') {
+            font-size: 1.1rem;
+        }
     }
 }
 
 .buttonGrid {
     display: grid;
     gap: $space-md;
+    width: 100%;
     grid-template-columns: 1fr;
 
     @include mq('md') {

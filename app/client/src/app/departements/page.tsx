@@ -1,32 +1,41 @@
 "use client";
+
+import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/button/button';
+import BackButton from '@/components/ui/backbutton/backButton';
 import { Monitor, FlaskConical, CodeXml } from 'lucide-react';
 import styles from './department.module.scss';
 
-export default function HomePage() {
+export default function DepartmentsPage() {
+    const router = useRouter();
+
     const actions = [
         {
             title: "MMI",
             desc: "Métiers du Multimédia et de l'Internet",
             subtitle: "",
-            icon: Monitor
+            icon: Monitor,
+            path: "/formulaire/mmi"
         },
         {
             title: "Chimie",
             desc: "Chimie et Génie des Procédés",
             subtitle: "",
-            icon: FlaskConical
+            icon: FlaskConical,
+            path: "/formulaire/chimie"
         },
         {
             title: "Informatique Graphique",
             desc: "Sciences Informatiques",
             subtitle: "",
-            icon: CodeXml
+            icon: CodeXml,
+            path: "/formulaire/informatique"
         },
     ];
 
     return (
         <div className={styles.mainContainer}>
+            <BackButton />
             <header className={styles.header}>
                 <div className={styles.logoPlaceholder}>
                     <img src="/assets/images/logo_UCA_long.webp" alt="Logo UCA" />
@@ -47,6 +56,7 @@ export default function HomePage() {
                             description={item.desc}
                             subtitle={item.subtitle}
                             Icon={item.icon}
+                            onClick={() => router.push(item.path)}
                         />
                     ))}
                 </div>

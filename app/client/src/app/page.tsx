@@ -1,27 +1,34 @@
 "use client";
+
+import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/button/button';
 import { Monitor, Smartphone, Settings } from 'lucide-react';
 import styles from './page.module.scss';
 
 export default function HomePage() {
+  const router = useRouter();
+
   const actions = [
     {
       title: "Borne d'Accueil",
       desc: "Inscription des visiteurs et QR Codes",
       subtitle: "Interface borne tactile",
-      icon: Monitor
+      icon: Monitor,
+      path: "/departements"
     },
     {
       title: "WebApp Accompagnateur",
       desc: "Prise en charge et suivi des visiteurs",
       subtitle: "Mobile / Tablette",
-      icon: Smartphone
+      icon: Smartphone,
+      path: "/"
     },
     {
       title: "Administration",
       desc: "Statistiques, immersions et utilisateurs",
-      subtitle: "Desktop",
-      icon: Settings
+      subtitle: "PC Bureau / Portable",
+      icon: Settings,
+      path: "/"
     },
   ];
 
@@ -47,6 +54,7 @@ export default function HomePage() {
               description={item.desc}
               subtitle={item.subtitle}
               Icon={item.icon}
+              onClick={() => router.push(item.path)}
             />
           ))}
         </div>

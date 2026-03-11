@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import InputField from '@/components/ui/forms/inputfield/inputfield';
 import SelectField from '@/components/ui/forms/selectfield/selectfield';
+import BackButton from '@/components/ui/backbutton/backButton';
 import { COUNTRIES, DEPARTMENTS } from '@/constants/location';
 import styles from './inscription.module.scss';
 
@@ -21,7 +22,7 @@ export default function InscriptionPage() {
                 <div className={styles.formCard}>
                     <h1 className={styles.title}>Dommage pour toi !</h1>
                     <p className={styles.subtitle}>Inutile d'essayer d'inventer un nouveau département ;)</p>
-                    <a href="/" className={styles.submitBtn} style={{ textAlign: 'center', display: 'block', textDecoration: 'none' }}>
+                    <a href="/departements" className={styles.submitBtn} style={{ textAlign: 'center', display: 'block', textDecoration: 'none' }}>
                         Retour à l'accueil
                     </a>
                 </div>
@@ -44,6 +45,7 @@ export default function InscriptionPage() {
         <div className={styles.mainContainer}>
             <main className="container">
                 <div className={styles.formCard}>
+                    <BackButton />
                     <h1 className={styles.title}>Inscription {deptName}</h1>
                     <p className={styles.subtitle}>Remplissez vos coordonnées pour continuer</p>
 
@@ -79,7 +81,7 @@ export default function InscriptionPage() {
                         <InputField label="Études / filière actuelle" name="studies" placeholder="Terminale générale / BUT Informatique..." />
 
                         <button type="submit" className={styles.submitBtn}>
-                            S'inscrire en {deptName}
+                            Confirmer les informations
                         </button>
                     </form>
                 </div>

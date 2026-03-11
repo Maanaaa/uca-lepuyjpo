@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
+import BackButton from '@/components/ui/backbutton/backButton';
 import styles from './immersion.module.scss';
 
 const DATA_IMMERSION: Record<string, { id: number; date: string; title: string }[]> = {
@@ -32,6 +33,9 @@ export default function ImmersionPage() {
                 <div className={styles.formCard}>
                     <h1 className={styles.title}>Aie Aie AIIIIIIIIIE !</h1>
                     <p className={styles.subtitle}>L'espoir fait vivre mais... ce département n'existe point.</p>
+                    <a href="/departements" className={styles.submitBtn} style={{ textAlign: 'center', display: 'block', textDecoration: 'none' }}>
+                        Retour à l'accueil
+                    </a>
                 </div>
             </div>
         );
@@ -59,6 +63,7 @@ export default function ImmersionPage() {
     return (
         <div className={styles.mainContainer}>
             <div className={styles.formCard}>
+                <BackButton />
                 <h1 className={styles.title}>Immersion {formatName(currentDept)}</h1>
                 <p className={styles.subtitle}>Sélectionnez la session à laquelle vous souhaitez participer.</p>
 
