@@ -1,27 +1,26 @@
 .mainContainer {
-    @include flex-center;
+    display: flex;
     flex-direction: column;
+    align-items: center;
     padding: $space-md;
-    min-height: 100vh;
     position: relative;
     background-color: $color-background;
 }
 
 .header {
     @include flex-center;
-    margin-bottom: $space-md;
-
-    padding-top: 60px;
-
-    img {
-        max-width: 280px;
-        height: auto;
-    }
+    margin-bottom: $space-lg;
+    padding-top: 80px;
 
     @include mq('md') {
-        padding-top: 0;
+        padding-top: 5vh;
+    }
 
-        img {
+    img {
+        max-width: 250px;
+        height: auto;
+
+        @include mq('md') {
             max-width: 350px;
         }
     }
@@ -29,18 +28,17 @@
 
 .heroSection {
     text-align: center;
-    margin-bottom: $space-md;
+    margin-bottom: $space-xl;
 
     .mainTitle {
         font-family: $font-secondary;
         font-weight: 800;
         color: $color-title;
-        margin-bottom: 4px;
-
-        font-size: 1.5rem;
+        margin-bottom: 12px;
+        font-size: 1.6rem;
 
         @include mq('md') {
-            font-size: 2rem;
+            font-size: 2.5rem;
         }
     }
 
@@ -50,7 +48,7 @@
         font-size: 1rem;
 
         @include mq('md') {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
         }
     }
 }
@@ -59,9 +57,12 @@
     display: grid;
     gap: $space-md;
     width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
     grid-template-columns: 1fr;
 
     @include mq('md') {
         grid-template-columns: repeat(3, 1fr);
+        gap: $space-lg;
     }
 }

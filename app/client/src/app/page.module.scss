@@ -1,22 +1,28 @@
 .mainContainer {
-    @include flex-center;
+    display: flex;
     flex-direction: column;
+    align-items: center;
+    flex: 1;
     padding: $space-md;
-    min-height: 100vh;
+    position: relative;
     background-color: $color-background;
 }
 
 .header {
     @include flex-center;
+    padding-top: 40px;
     margin-bottom: $space-md;
+
+    @include mq('md') {
+        padding-top: $space-xl;
+        margin-bottom: $space-lg;
+    }
 
     img {
         max-width: 280px;
         height: auto;
-    }
 
-    @include mq('md') {
-        img {
+        @include mq('md') {
             max-width: 350px;
         }
     }
@@ -25,6 +31,10 @@
 .heroSection {
     text-align: center;
     margin-bottom: $space-md;
+
+    @include mq('md') {
+        margin-bottom: $space-lg;
+    }
 
     .mainTitle {
         font-family: $font-secondary;
@@ -59,5 +69,6 @@
 
     @include mq('md') {
         grid-template-columns: repeat(3, 1fr);
+        gap: $space-lg;
     }
 }

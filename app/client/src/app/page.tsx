@@ -21,14 +21,14 @@ export default function HomePage() {
       desc: "Prise en charge et suivi des visiteurs",
       subtitle: "Mobile / Tablette",
       icon: Smartphone,
-      path: "/"
+      path: "/connexion-accompagnateur"
     },
     {
       title: "Administration",
       desc: "Statistiques, immersions et utilisateurs",
       subtitle: "PC Bureau / Portable",
       icon: Settings,
-      path: "/"
+      path: "/connexion-admin"
     },
   ];
 

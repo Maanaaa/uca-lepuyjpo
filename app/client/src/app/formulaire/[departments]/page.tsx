@@ -51,12 +51,12 @@ export default function InscriptionPage() {
 
                     <form className={styles.form}>
                         <div className={styles.row}>
-                            <InputField label="Nom" name="lastname" placeholder="Ex: Thévann" />
-                            <InputField label="Prénom" name="firstname" placeholder="Ex: MANYAPOFF" />
+                            <InputField label="Nom" name="lastname" placeholder="Ex: Thévann" required />
+                            <InputField label="Prénom" name="firstname" placeholder="Ex: MANYAPOFF" required />
                         </div>
 
-                        <InputField label="Adresse Email" type="email" name="email" placeholder="thevann.manyapoff@example.com" />
-                        <InputField label="Numéro de téléphone" type="tel" name="phone" placeholder="06 01 02 03 04" />
+                        <InputField label="Adresse Email" type="email" name="email" placeholder="thevann.manyapoff@example.com" required />
+                        <InputField label="Numéro de téléphone" type="tel" name="phone" placeholder="06 01 02 03 04" required />
 
                         <SelectField
                             label="Pays"
@@ -64,6 +64,7 @@ export default function InscriptionPage() {
                             options={COUNTRIES}
                             value={selectedCountry}
                             onChange={(e) => setSelectedCountry(e.target.value)}
+                            required
                         />
 
                         {selectedCountry === 'FR' ? (
@@ -72,13 +73,14 @@ export default function InscriptionPage() {
                                 name="department"
                                 options={DEPARTMENTS}
                                 onChange={() => { }}
+                                required
                             />
                         ) : (
                             <div className={styles.emptySpace} />
                         )}
 
-                        <InputField label="Établissement actuel" name="school" placeholder="Lycée, Université..." />
-                        <InputField label="Études / filière actuelle" name="studies" placeholder="Terminale générale / BUT Informatique..." />
+                        <InputField label="Établissement actuel" name="school" placeholder="Lycée, Université..." required />
+                        <InputField label="Études / filière actuelle" name="studies" placeholder="Terminale générale / BUT Informatique..." required />
 
                         <button type="submit" className={styles.submitBtn}>
                             Confirmer les informations
