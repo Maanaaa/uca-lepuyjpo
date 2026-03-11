@@ -89,7 +89,6 @@ class VisitorManager
         // 1. Mise à jour de la visite
         $visite->setStatut('EN_COURS');
         $visite->setEtudiant($etudiant);
-        $visite->setEtudiantId($etudiant->getId());
 
         // 2. Mise à jour de l'étudiant
         $etudiant->setIsDisponible(false);

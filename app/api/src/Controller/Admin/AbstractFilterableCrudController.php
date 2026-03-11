@@ -17,11 +17,12 @@ abstract class AbstractFilterableCrudController extends AbstractCrudController
     {
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
         
-        /** @var Utilisateur $user */
         $user = $this->getUser();
 
         if ($user && !in_array('ROLE_SUPER_ADMIN', $user->getRoles())) {
-            if (property_exists($entityDto->getFqcn(), 'departement')) {
+            $class = $entityDto->getFqcn();
+            if (method_exists($class, 'getDepartement')) {
+                /** @var Utilisateur|null $user */
                 $qb->andWhere('entity.departement = :dept')
                    ->setParameter('dept', $user->getDepartement());
             }

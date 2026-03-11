@@ -49,15 +49,7 @@ class AppCustomAuthenticator extends AbstractLoginFormAuthenticator
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }
-
-        $user = $token->getUser();
-        
-        // Redirection simple : Admin vers panel, reste vers dashboard étudiant
-        if (in_array('ROLE_DEPT_ADMIN', $user->getRoles()) || in_array('ROLE_SUPER_ADMIN', $user->getRoles())) {
-            return new RedirectResponse($this->urlGenerator->generate('admin'));
-        }
-
-        return new RedirectResponse($this->urlGenerator->generate('app_student_dashboard'));
+        return new RedirectResponse($this->urlGenerator->generate('admin'));
     }
 
     protected function getLoginUrl(Request $request): string

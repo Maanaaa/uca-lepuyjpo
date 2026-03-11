@@ -43,7 +43,6 @@ class UtilisateurCrudController extends AbstractFilterableCrudController
 
         yield TextField::new('password', 'Mot de passe')
             ->onlyOnForms()
-            // On ne le rend obligatoire qu'à la création, pas à l'édition
             ->setRequired($pageName === 'new');
     }
 
