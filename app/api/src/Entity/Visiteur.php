@@ -45,6 +45,15 @@ class Visiteur
     #[ORM\JoinColumn(nullable: false)]
     private ?Departement $departement = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $Pays = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $departementOrigine = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $etudes = null;
+
     public function __toString(): string {
         return $this->prenom . ' ' . $this->nom;
     }
@@ -169,6 +178,42 @@ class Visiteur
     public function setDepartement(?Departement $departement): static
     {
         $this->departement = $departement;
+
+        return $this;
+    }
+
+    public function getPays(): ?string
+    {
+        return $this->Pays;
+    }
+
+    public function setPays(?string $Pays): static
+    {
+        $this->Pays = $Pays;
+
+        return $this;
+    }
+
+    public function getDepartementOrigine(): ?int
+    {
+        return $this->departementOrigine;
+    }
+
+    public function setDepartementOrigine(?int $departementOrigine): static
+    {
+        $this->departementOrigine = $departementOrigine;
+
+        return $this;
+    }
+
+    public function getEtudes(): ?string
+    {
+        return $this->etudes;
+    }
+
+    public function setEtudes(?string $etudes): static
+    {
+        $this->etudes = $etudes;
 
         return $this;
     }
