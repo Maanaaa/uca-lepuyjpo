@@ -54,9 +54,16 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Visite::class, mappedBy: 'etudiant')]
     private Collection $visites;
 
+    /**
+     * @var Collection<int, PushSubscription>
+     */
+    #[ORM\OneToMany(targetEntity: PushSubscription::class, mappedBy: 'utilisateur')]
+    private Collection $pushSubscriptions;
+
     public function __construct()
     {
         $this->visites = new ArrayCollection();
+        $this->pushSubscriptions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -179,5 +186,35 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function __toString(): string
     {
         return $this->prenom . ' ' . $this->nom;
+    }
+
+    /**
+     * @return Collection<int, PushSubscription>
+     */
+    public function getPushSubscriptions(): Collection
+    {
+        return $this->pushSubscriptions;
+    }
+
+    public function addPushSubscription(PushSubscription $pushSubscription): static
+    {
+        if (!$this->pushSubscriptions->contains($pushSubscription)) {
+            $this->pushSubscriptions->add($pushSubscription);
+            $pushSubscription->setUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removePushSubscription(PushSubscription $pushSubscription): static
+    {
+        if ($this->pushSubscriptions->removeElement($pushSubscription)) {
+            // set the owning side to null (unless already changed)
+            if ($pushSubscription->getUtilisateur() === $this) {
+                $pushSubscription->setUtilisateur(null);
+            }
+        }
+
+        return $this;
     }
 }
