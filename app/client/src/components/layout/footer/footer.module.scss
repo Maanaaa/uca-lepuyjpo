@@ -1,0 +1,25 @@
+@use "../../../styles/abstracts/index" as*;
+
+.footer {
+    width: 100%;
+    background-image: url('/assets/forms/footer_form.svg');
+    background-size: cover;
+    background-position: top center;
+    background-repeat: no-repeat;
+
+    min-height: 85px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: $space-sm;
+
+    flex-shrink: 0;
+
+    .text {
+        color: $color-white;
+        font-family: $font-secondary;
+        font-size: $font-size-secondary;
+        font-weight: 400;
+        text-align: center;
+    }
+}

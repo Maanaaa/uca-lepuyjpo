@@ -1,0 +1,47 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.6rem;
+    width: 100%;
+}
+
+.label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: $color-title;
+    margin-bottom: 2px;
+
+    @include mq('md') {
+        font-size: 0.85rem;
+    }
+}
+
+.input {
+    width: 100%;
+    box-sizing: border-box;
+    background: $color-white;
+    border: 2px solid $color-edge;
+    border-radius: 12px;
+    padding: 8px 12px;
+    font-size: 0.95rem;
+    color: $color-text;
+    transition: all 0.2s;
+    cursor: pointer;
+
+    @include mq('md') {
+        padding: 10px 14px;
+        font-size: 1rem;
+    }
+
+    &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+    }
+}
+
+.required {
+    color: #e74c3c;
+    font-weight: bold;
+    margin-left: 2px;
+}

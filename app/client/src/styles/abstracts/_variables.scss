@@ -1,0 +1,47 @@
+// Couleurs
+$color-primary: #006C82;
+$color-secondary: #006C821A;
+$color-background: #FAFAFA;
+
+$color-white: #ffffff;
+$color-black: #000000;
+$color-gray: #67777E;
+
+$color-error: #ff4d4d;
+$color-success: #4CAF50;
+
+$color-title: #1F292E;
+$color-text: #67777E;
+$color-warning: #FFA500;
+
+$color-edge: #DCE2E5;
+
+// Couleurs drapeau layout header
+
+$color-fr-blue: #002153;
+$color-fr-red: #e1000f;
+
+// Typographie
+$font-base: 'Montserrat', sans-serif;
+$font-size-base: 32px;
+$font-secondary: 'Inter', sans-serif;
+$font-size-secondary: 16px;
+$font-size-thirdary: 12px;
+$font-size-four: 8px;
+
+
+
+// Breakpoints pour le responsive
+$breakpoints: (
+    'sm': 640px,
+    'md': 768px,
+    'lg': 1024px,
+    'xl': 1280px,
+);
+
+// Espacements (système de grille)
+$space-xs: 0.5rem; // 8px
+$space-sm: 1rem; // 16px
+$space-md: 1rem; // 32px
+$space-lg: 2rem; // 64px
+$space-xl: 4rem; // 128px

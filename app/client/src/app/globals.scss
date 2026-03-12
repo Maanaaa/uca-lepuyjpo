@@ -1,0 +1,134 @@
+/* --- 1. RESET CSS --- */
+
+@use "../styles/base/reset";
+
+/* --- POLICES TEXTES --- */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+/* --- 2. STYLES DE BASE --- */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+
+  /* Scroll autorisé sur mobile */
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  /* Scroll bloqué sur pc */
+  @include mq('lg') {
+    overflow: hidden;
+  }
+}
+
+body {
+  background-color: $color-background;
+  color: $color-text;
+  font-family: $font-base;
+  font-size: $font-size-base;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- 3. TYPOGRAPHIE --- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: $color-title;
+  font-weight: 700;
+  margin-bottom: $space-sm;
+}
+
+a {
+  color: $color-primary;
+  text-decoration: none;
+  transition: opacity 0.2s ease-in-out;
+
+  &:hover {
+    opacity: 0.8;
+    color: darken($color-primary, 10%);
+  }
+}
+
+/* --- 4. ÉLÉMENTS COMMUNS --- */
+ul,
+ol {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* --- 5. UTILITAIRES DE MISE EN PAGE --- */
+.container {
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: $space-sm;
+  padding-left: $space-sm;
+
+  @include mq('sm') {
+    max-width: 640px;
+  }
+
+  @include mq('md') {
+    max-width: 768px;
+  }
+
+  @include mq('lg') {
+    max-width: 1024px;
+  }
+
+  @include mq('xl') {
+    max-width: 1280px;
+  }
+}
+
+/* --- 6. LIGNE DRAPEAU FR --- */
+.fr-flag-line {
+  height: 4px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+
+  background: linear-gradient(to right,
+      #002153 33.33%, // Bleu
+      #ffffff 33.33%, // Blanc
+      #ffffff 66.66%,
+      #e1000f 66.66% // Rouge
+    );
+}
+
+.main-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  /* On laisse la page s'étirer selon le contenu */
+  min-height: 100vh;
+
+  /* Sur pc on force la hauteur à 100% de l'écran */
+  @include mq('lg') {
+    height: 100vh;
+  }
+}
+
+// Étire le conteneur et pousse le footer.
+.content-grow {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}

@@ -1,0 +1,74 @@
+.mainContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    padding: $space-md;
+    position: relative;
+    background-color: $color-background;
+}
+
+.header {
+    @include flex-center;
+    padding-top: 40px;
+    margin-bottom: $space-md;
+
+    @include mq('md') {
+        padding-top: $space-xl;
+        margin-bottom: $space-lg;
+    }
+
+    img {
+        max-width: 280px;
+        height: auto;
+
+        @include mq('md') {
+            max-width: 350px;
+        }
+    }
+}
+
+.heroSection {
+    text-align: center;
+    margin-bottom: $space-md;
+
+    @include mq('md') {
+        margin-bottom: $space-lg;
+    }
+
+    .mainTitle {
+        font-family: $font-secondary;
+        font-weight: 800;
+        color: $color-title;
+        margin-bottom: 4px;
+        font-size: 1.5rem;
+
+        @include mq('md') {
+            font-size: 2.2rem;
+        }
+    }
+
+    .mainSubtitle {
+        color: $color-gray;
+        font-family: $font-secondary;
+        font-size: 1rem;
+
+        @include mq('md') {
+            font-size: 1.1rem;
+        }
+    }
+}
+
+.buttonGrid {
+    display: grid;
+    gap: $space-md;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    grid-template-columns: 1fr;
+
+    @include mq('md') {
+        grid-template-columns: repeat(3, 1fr);
+        gap: $space-lg;
+    }
+}

@@ -1,0 +1,153 @@
+.mainContainer {
+    @include flex-center;
+    flex-direction: column;
+    background-color: $color-background;
+    flex: 1;
+    padding: $space-md;
+    position: relative;
+}
+
+.formCard {
+    background: $color-white;
+    border: 1px solid $color-edge;
+    border-radius: 24px;
+    padding: $space-lg;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    position: relative;
+
+    @include mq('md') {
+        max-width: 600px;
+    }
+}
+
+.title {
+    text-align: center;
+    font-size: 1.5rem;
+    color: $color-title;
+    margin-bottom: 8px;
+    text-transform: none;
+
+    @include mq('md') {
+        font-size: 1.8rem;
+    }
+}
+
+.subtitle {
+    text-align: center;
+    color: $color-text;
+    font-size: 0.9rem;
+    margin-bottom: $space-lg;
+
+    @include mq('md') {
+        font-size: 0.95rem;
+    }
+}
+
+.selectionList {
+    display: flex;
+    flex-direction: column;
+    gap: $space-md;
+    margin-bottom: $space-lg;
+}
+
+.dateItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $space-md;
+    border: 2px solid $color-edge;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        border-color: $color-primary;
+        background-color: rgba($color-primary, 0.02);
+    }
+
+    &.selected {
+        border-color: $color-primary;
+        background-color: rgba($color-primary, 0.05);
+        position: relative;
+
+        &::after {
+            content: '✓';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: $color-primary;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    }
+}
+
+.dateInfo {
+    display: flex;
+    flex-direction: column;
+
+    .dateText {
+        font-weight: 700;
+        font-size: 1rem;
+        color: $color-title;
+
+        @include mq('md') {
+            font-size: 1.1rem;
+        }
+    }
+
+    .titleText {
+        font-size: 0.85rem;
+        color: $color-text;
+
+        @include mq('md') {
+            font-size: 0.9rem;
+        }
+    }
+}
+
+.noData {
+    text-align: center;
+    color: $color-text;
+    font-style: italic;
+    padding: $space-md;
+}
+
+.submitBtn {
+    width: 100%;
+    background-color: $color-primary;
+    color: $color-white;
+    padding: 16px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+
+    @include mq('md') {
+        font-size: 1rem;
+    }
+
+    &:hover:not(:disabled) {
+        filter: brightness(1.1);
+    }
+
+    &:active:not(:disabled) {
+        transform: scale(0.98);
+    }
+
+    &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+}

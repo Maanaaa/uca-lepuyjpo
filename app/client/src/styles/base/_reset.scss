@@ -1,0 +1,43 @@
+/* 1. Reset des marges et paddings pour tout le monde */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* Pour que le padding ne change pas la taille des boites */
+}
+
+/* 2. On s'assure que le body prend toute la hauteur */
+html,
+body {
+    height: 100%;
+    -webkit-text-size-adjust: 100%;
+    /* Évite les zooms bizarres sur mobile */
+}
+
+/* 3. On enlève les styles par défaut des éléments problématiques */
+ul,
+ol {
+    list-style: none;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+    /* Enlève l'espace vide sous les images */
+}
+
+button,
+input,
+textarea {
+    font: inherit;
+    /* Pour qu'ils utilisent la police du site et pas celle du navigateur */
+    border: none;
+    background: none;
+}
+
+/* 4. On rend le curseur "main" sur les boutons cliquables */
+button {
+    cursor: pointer;
+}
