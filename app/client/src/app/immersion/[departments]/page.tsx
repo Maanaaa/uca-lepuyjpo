@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, notFound } from 'next/navigation';
 import BackButton from '@/components/ui/backbutton/backButton';
 import styles from './immersion.module.scss';
 
@@ -15,8 +15,7 @@ const DATA_IMMERSION: Record<string, { id: number; date: string; title: string }
         { id: 4, date: "Mardi 17 Mars 2026", title: "Je fé dé je vide é oh" },
         { id: 5, date: "Mercredi 18 Mars 2026", title: "Atelier Algorithmique Python (mais pas IA, on laisse les MMI Dev faire ça)" },
     ],
-    chimie: [
-    ]
+    chimie: []
 };
 
 const VALID_DEPTS = ['mmi', 'informatique', 'chimie'];
@@ -26,28 +25,13 @@ export default function ImmersionPage() {
     const currentDept = params.departments as string;
     const [selectedId, setSelectedId] = useState<number | null>(null);
 
-    // On vérifie si le département existe
     if (!VALID_DEPTS.includes(currentDept)) {
-        return (
-            <div className={styles.mainContainer}>
-                <div className={styles.formCard}>
-                    <h1 className={styles.title}>Aie Aie AIIIIIIIIIE !</h1>
-                    <p className={styles.subtitle}>L'espoir fait vivre mais... ce département n'existe point.</p>
-                    <a href="/departements" className={styles.submitBtn} style={{ textAlign: 'center', display: 'block', textDecoration: 'none' }}>
-                        Retour à l'accueil
-                    </a>
-                </div>
-            </div>
-        );
+        notFound();
     }
 
-    // Récupérer les dates spécifiques au département de l'URL (pour liaison api symfo après).
+
     const currentSessions = DATA_IMMERSION[currentDept] || [];
-
-    // Trouver la session sélectionnée pour l'alerte
     const selectedDay = currentSessions.find(day => day.id === selectedId);
-
-    // Même système de majuscule comme dans la page de formulaire.
 
     const formatName = (name: string) => {
         if (!name) return "";
