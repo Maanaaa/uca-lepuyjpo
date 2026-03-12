@@ -11,7 +11,7 @@ self.addEventListener('push', function(event) {
             etudiantId: data.etudiantId
         },
         actions: [
-            { action: 'accept', title: '✅ Accepter la visite' },
+            { action: 'accept', title: 'Accepter la visite' },
             { action: 'close', title: 'Fermer' }
         ]
     };
@@ -28,7 +28,6 @@ self.addEventListener('notificationclick', function(event) {
         const vId = event.notification.data.visiteId;
         const eId = event.notification.data.etudiantId;
 
-        // Appel direct à l'API d'acceptation
         event.waitUntil(
             fetch('/api/visite/accept', {
                 method: 'POST',

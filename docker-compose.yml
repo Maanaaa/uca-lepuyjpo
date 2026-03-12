@@ -38,6 +38,19 @@ services:
     volumes:
       - db_data:/var/lib/mysql
 
+  mercure:
+    image: dunglas/mercure
+    restart: always
+    environment:
+      SERVER_NAME: :80
+      MERCURE_PUBLISHER_JWT_KEY: "e33ebc3da3abd85b8fbc92d57fca20f48cfa43cdf154d14f2d0f95b64139749638ebb112"
+      MERCURE_SUBSCRIBER_JWT_KEY: "e33ebc3da3abd85b8fbc92d57fca20f48cfa43cdf154d14f2d0f95b64139749638ebb112"
+      MERCURE_EXTRA_DIRECTIVES: |
+        anonymous
+        cors_origins *
+    ports:
+      - "4444:80" 
+      
   pma:
     image: phpmyadmin:latest
     container_name: ${PROJECT_NAME}-pma

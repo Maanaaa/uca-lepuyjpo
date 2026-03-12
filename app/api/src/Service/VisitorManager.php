@@ -9,6 +9,7 @@ use App\Repository\DepartementRepository;
 use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Mercure\HubInterface;
+use Symfony\Component\Mercure\Update;
 use Minishlink\WebPush\WebPush;
 use Minishlink\WebPush\Subscription;
 use App\Service\QrCodeGenerator; 
@@ -35,7 +36,10 @@ class VisitorManager
         $this->qrCodeGenerator = $qrCodeGenerator; 
     }
 
-    public function createFullRegistration(array $data): array // Changé en array pour inclure la visite + le QR
+    /**
+     * Crée le visiteur, la visite, envoie le Push, publie sur Mercure et génère le QR Code.
+     */
+    public function createFullRegistration(array $data): array 
     {
         $deptId = $data['departementId'] ?? $data['departement_id'] ?? null;
         $departement = $this->deptRepo->find($deptId);
@@ -52,24 +56,36 @@ class VisitorManager
         $visiteur->setLycee($data['lycee'] ?? '');
         $visiteur->setVille($data['ville'] ?? '');
         $visiteur->setDepartement($departement);
-
         $this->em->persist($visiteur);
-
         $visite = new Visite();
         $visite->setVisiteur($visiteur);
         $visite->setDepartement($departement);
         $visite->setStatut('ATTENTE');
         $visite->setDebut(new \DateTime());
-
         $this->em->persist($visite);
+
         $this->em->flush();
 
+        // Notif Push
+        $this->notifyStudents($visite);
+
+        // Mercure pour mise à jour dashboard
         try {
-            $this->notifyStudents($visite);
+            $update = new Update(
+                'https://jpo.uca.fr/visites',
+                json_encode([
+                    'type' => 'NEW_VISITOR',
+                    'prenom' => $visiteur->getPrenom(),
+                    'dept' => $departement->getNom(),
+                    'heure' => $visite->getDebut()->format('H:i')
+                ])
+            );
+            $this->hub->publish($update);
         } catch (\Exception $e) {
-            // Silence
+            
         }
 
+        // Génération qr
         $qrCodeUri = $this->qrCodeGenerator->generateUri([
             'id' => $visiteur->getId(),
             'nom' => $visiteur->getNom(),
@@ -77,45 +93,64 @@ class VisitorManager
             'email' => $visiteur->getEmail(),
         ]);
 
-        // On retourne tout au contrôleur
         return [
             'visite' => $visite,
             'qrCode' => $qrCodeUri
         ];
     }
 
+    // Notif push via VAPID
     public function notifyStudents(Visite $visite): void
     {
-        $auth = [
-            'VAPID' => [
-                'subject' => $_ENV['VAPID_CONTACT'],
-                'publicKey' => $_ENV['VAPID_PUBLIC_KEY'],
-                'privateKey' => $_ENV['VAPID_PRIVATE_KEY'],
-            ],
-        ];
+        // On ignore les notices GMP/BCMath pour le mode dev
+        $oldLevel = error_reporting(E_ALL & ~E_USER_NOTICE);
 
-        $webPush = new WebPush($auth);
-        $subscriptions = $this->em->getRepository(PushSubscription::class)->findAll();
+        try {
+            $auth = [
+                'VAPID' => [
+                    'subject' => 'mailto:' . $_ENV['VAPID_CONTACT'],
+                    'publicKey' => $_ENV['VAPID_PUBLIC_KEY'],
+                    'privateKey' => $_ENV['VAPID_PRIVATE_KEY'],
+                ],
+            ];
 
-        foreach ($subscriptions as $s) {
-            $webPush->queueNotification(
-                Subscription::create([
-                    'endpoint' => $s->getEndpoint(),
-                    'publicKey' => $s->getP256dh(),
-                    'authToken' => $s->getAuth(),
-                ]),
-                json_encode([
-                    'title' => 'Nouveau visiteur ! 📢',
-                    'body' => ($visite->getVisiteur()->getPrenom() ?: 'Un visiteur') . ' attend un guide.',
-                    'visiteId' => $visite->getId(),
-                    'etudiantId' => $s->getUtilisateur()->getId()
-                ])
-            );
+            $webPush = new WebPush($auth);
+            $subscriptions = $this->em->getRepository(PushSubscription::class)->findAll();
+
+            foreach ($subscriptions as $s) {
+                $webPush->queueNotification(
+                    Subscription::create([
+                        'endpoint' => $s->getEndpoint(),
+                        'publicKey' => $s->getP256dh(),
+                        'authToken' => $s->getAuth(),
+                    ]),
+                    json_encode([
+                        'title' => 'Nouveau visiteur ! 📢',
+                        'body' => ($visite->getVisiteur()->getPrenom() ?: 'Un visiteur') . ' attend un guide.',
+                        'visiteId' => $visite->getId(),
+                        'etudiantId' => $s->getUtilisateur() ? $s->getUtilisateur()->getId() : null
+                    ])
+                );
+            }
+
+            foreach ($webPush->flush() as $report) {
+                if (!$report->isSuccess() && $report->isSubscriptionExpired()) {
+                    $sub = $this->em->getRepository(PushSubscription::class)->findOneBy(['endpoint' => $report->getEndpoint()]);
+                    if ($sub) { $this->em->remove($sub); }
+                }
+            }
+            $this->em->flush();
+
+        } catch (\Exception $e) {
+            // Log silencieux
+        } finally {
+            error_reporting($oldLevel);
         }
-
-        $webPush->flush();
     }
 
+    
+     // Assigne un étudiant à une visite.
+     
     public function acceptVisitor(int $visiteId, int $etudiantId): Visite
     {
         $visite = $this->em->getRepository(Visite::class)->find($visiteId);
@@ -138,6 +173,7 @@ class VisitorManager
         return $visite;
     }
 
+    // Termine une visite et libère l'étudiant.
     public function finishVisite(int $visiteId): Visite
     {
         $visite = $this->em->getRepository(Visite::class)->find($visiteId);
@@ -163,6 +199,7 @@ class VisitorManager
         return $visite;
     }
 
+     // Récupère la file d'attente d'un département.
     public function getWaitingList(int $departementId): array
     {
         $departement = $this->deptRepo->find($departementId);
