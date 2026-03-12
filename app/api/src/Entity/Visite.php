@@ -188,7 +188,6 @@ class Visite
     public function setEtudiant(?Utilisateur $etudiant): static
     {
         $this->etudiant = $etudiant;
-
         return $this;
     }
 
