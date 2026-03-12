@@ -1,32 +1,75 @@
 "use client";
 
-import { useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useParams, useSearchParams } from 'next/navigation';
 import BackButton from '@/components/ui/backbutton/backButton';
 import styles from './immersion.module.scss';
-
-const DATA_IMMERSION: Record<string, { id: number; date: string; title: string }[]> = {
-    mmi: [
-        { id: 1, date: "Mardi 24 Mars 2026", title: "Journée en compagnie des MMI 1, 2 et 3." },
-        { id: 2, date: "Jeudi 26 Mars 2026", title: "Journée en compagnie des MMI 1, 2 et 3" },
-        { id: 3, date: "Lundi 30 Mars 2026", title: "Journée en compagnie des MMI 1, 2 et 3" },
-    ],
-    informatique: [
-        { id: 4, date: "Mardi 17 Mars 2026", title: "Je fé dé je vide é oh" },
-        { id: 5, date: "Mercredi 18 Mars 2026", title: "Atelier Algorithmique Python (mais pas IA, on laisse les MMI Dev faire ça)" },
-    ],
-    chimie: [
-    ]
-};
 
 const VALID_DEPTS = ['mmi', 'informatique', 'chimie'];
 
 export default function ImmersionPage() {
     const params = useParams();
+    const searchParams = useSearchParams();
     const currentDept = params.departments as string;
-    const [selectedId, setSelectedId] = useState<number | null>(null);
+    
+    const visitorId = searchParams.get('vId'); 
 
-    // On vérifie si le département existe
+    const [selectedId, setSelectedId] = useState<number | null>(null);
+    const [currentSessions, setCurrentSessions] = useState<any[]>([]);
+    const [deptMap, setDeptMap] = useState<Record<string, number>>({});
+    const [loading, setLoading] = useState(true);
+
+    // Charger les départements pour faire le mapping slug -> id
+    useEffect(() => {
+        fetch("http://localhost:8080/api/departements")
+            .then(res => res.json())
+            .then(data => {
+                const members = data['member'] || data['hydra:member'] || [];
+                const map: Record<string, number> = {};
+
+                members.forEach((d: any) => {
+                    if (d.slug && typeof d.id === 'number') {
+                        map[d.slug] = d.id;
+                    }
+                });
+
+                setDeptMap(map);
+            })
+            .catch(err => console.error("Erreur API Departments:", err));
+    }, []);
+
+    // Charger les immersions une fois qu'on a le mapping des départements
+    useEffect(() => {
+        if (!currentDept || !deptMap[currentDept]) return;
+
+        const targetId = deptMap[currentDept];
+
+        fetch("http://localhost:8080/api/journee_immersions")
+            .then(res => res.json())
+            .then(data => {
+                const allSessions = data['member'] || data['hydra:member'] || [];
+                const filtered = allSessions.filter((s: any) => {
+                    // Priorité au champ int departement_id (ton entité l'a)
+                    if (typeof s.departement_id !== 'undefined') {
+                        return s.departement_id === targetId;
+                    }
+                    // Fallback sur l'IRI de la relation
+                    if (typeof s.departement === 'string') {
+                        const match = s.departement.match(/\/departements\/(\d+)/);
+                        const deptIdFromIri = match ? Number(match[1]) : null;
+                        return deptIdFromIri === targetId;
+                    }
+                    return false;
+                });
+                setCurrentSessions(filtered);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error("Erreur immersion API:", err);
+                setLoading(false);
+            });
+    }, [currentDept, deptMap]);
+
     if (!VALID_DEPTS.includes(currentDept)) {
         return (
             <div className={styles.mainContainer}>
@@ -41,24 +84,47 @@ export default function ImmersionPage() {
         );
     }
 
-    // Récupérer les dates spécifiques au département de l'URL (pour liaison api symfo après).
-    const currentSessions = DATA_IMMERSION[currentDept] || [];
-
-    // Trouver la session sélectionnée pour l'alerte
     const selectedDay = currentSessions.find(day => day.id === selectedId);
-
-    // Même système de majuscule comme dans la page de formulaire.
 
     const formatName = (name: string) => {
         if (!name) return "";
         return name === 'mmi' ? 'MMI' : name.charAt(0).toUpperCase() + name.slice(1);
     };
 
-    const handleConfirm = () => {
-        if (selectedDay) {
-            alert(`Inscription enregistrée pour l'immersion ${formatName(currentDept)} du ${selectedDay.date} :\n${selectedDay.title}`);
-        }
+    const formatDate = (dateStr: string) => {
+        const options: Intl.DateTimeFormatOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        return new Date(dateStr).toLocaleDateString('fr-FR', options);
     };
+
+    const prenom = searchParams.get('prenom') || 'visiteur';
+
+    const handleConfirm = async () => {
+    if (!selectedDay || !visitorId) return;
+
+    try {
+        const response = await fetch("http://localhost:8080/api/inscription-immersion", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                vId: Number(visitorId),
+                journeeId: selectedDay.id,  // ← AJOUTER ÇA !
+                dept: currentDept
+            }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+        // Utilise le prénom de l'URL, pas celui de l'API
+        alert(`Super ${prenom} ! Ton immersion en ${formatName(currentDept)} est validée pour le ${formatDate(selectedDay.date)}.`);
+        } else {
+        alert("Erreur : " + (result.error || "Impossible de s'inscrire"));
+        }
+    } catch (err) {
+        console.error("Erreur lors de l'inscription immersion:", err);
+    }
+    };
+
 
     return (
         <div className={styles.mainContainer}>
@@ -68,7 +134,9 @@ export default function ImmersionPage() {
                 <p className={styles.subtitle}>Sélectionnez la session à laquelle vous souhaitez participer.</p>
 
                 <div className={styles.selectionList}>
-                    {currentSessions.length > 0 ? (
+                    {loading ? (
+                        <p className={styles.noData}>Chargement des dates...</p>
+                    ) : currentSessions.length > 0 ? (
                         currentSessions.map((day) => {
                             const isSelected = selectedId === day.id;
                             return (
@@ -78,8 +146,8 @@ export default function ImmersionPage() {
                                     onClick={() => setSelectedId(day.id)}
                                 >
                                     <div className={styles.dateInfo}>
-                                        <span className={styles.dateText}>{day.date}</span>
-                                        <span className={styles.titleText}>{day.title}</span>
+                                        <span className={styles.dateText}>{formatDate(day.date)}</span>
+                                        <span className={styles.titleText}>{day.nom || "Journée d'immersion standard"}</span>
                                     </div>
                                 </div>
                             );

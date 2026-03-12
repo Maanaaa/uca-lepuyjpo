@@ -21,10 +21,10 @@ class Visite
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)] // Ajoute TIME ici
     private ?\DateTime $debut = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)] // Ici aussi
     private ?\DateTime $fin = null;
 
     #[ORM\Column(length: 255)]

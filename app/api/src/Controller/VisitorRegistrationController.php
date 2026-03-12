@@ -24,7 +24,7 @@ final class VisitorRegistrationController extends AbstractController
         return $this->json([
             'message' => 'Visiteur inscrit et visite créée',
             'visiteId' => $visite->getId(),
-            'qrCode' => $qrCode // Ton Next.js recevra le base64 ici !
+            'qrCode' => $qrCode 
         ]);
     }
 }

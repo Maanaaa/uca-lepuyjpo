@@ -8,7 +8,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 
-
 class JourneeImmersionCrudController extends AbstractFilterableCrudController
 {
     public static function getEntityFqcn(): string
@@ -41,5 +40,10 @@ class JourneeImmersionCrudController extends AbstractFilterableCrudController
                 ->setFormTypeOption('disabled', true)
                 ->hideOnForm(); 
         }
+
+        // Liste des inscriptions (visiteurs inscrits)
+        yield AssociationField::new('inscriptions', 'Inscriptions')
+            ->setFormTypeOption('disabled', true)
+            ->onlyOnDetail();
     }
 }

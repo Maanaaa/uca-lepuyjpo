@@ -55,6 +55,9 @@ class VisitorManager
         $visiteur->setTelephone($data['telephone'] ?? '');
         $visiteur->setLycee($data['lycee'] ?? '');
         $visiteur->setVille($data['ville'] ?? '');
+        $visiteur->setPays($data['Pays'] ?? null);                    
+        $visiteur->setDepartementOrigine($data['departementOrigine'] ?? null);
+        $visiteur->setEtudes($data['etudes'] ?? null);
         $visiteur->setDepartement($departement);
         $this->em->persist($visiteur);
         $visite = new Visite();
@@ -72,7 +75,7 @@ class VisitorManager
         // Mercure pour mise à jour dashboard
         try {
             $update = new Update(
-                'https://jpo.uca.fr/visites',
+                'https://jpo.uca.fr/visites', // Faux lien juste pour que Mercure fonctionne
                 json_encode([
                     'type' => 'NEW_VISITOR',
                     'prenom' => $visiteur->getPrenom(),
