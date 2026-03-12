@@ -17,6 +17,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+use App\Controller\Admin\InscriptionImmersionCrudController;
+
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
@@ -157,6 +159,15 @@ public function configureMenuItems(): iterable
             
         yield MenuItem::linkToUrl('Utilisateurs', 'fa fa-user', 
             $this->adminUrlGenerator->setController(UtilisateurCrudController::class)->setAction('index')->generateUrl())
+            ->setPermission('ROLE_DEPT_ADMIN');
+
+
+        yield MenuItem::linkToUrl('Inscriptions Immersion', 'fa fa-list', 
+            $this->adminUrlGenerator
+                ->setController(InscriptionImmersionCrudController::class)
+                ->setAction('index')
+                ->generateUrl()
+            )
             ->setPermission('ROLE_DEPT_ADMIN');
 
         yield MenuItem::section('Flux');

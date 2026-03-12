@@ -54,6 +54,12 @@ class Visiteur
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $etudes = null;
 
+    /**
+     * @var Collection<int, InscriptionImmersion>
+     */
+    #[ORM\OneToMany(mappedBy: 'visiteur', targetEntity: InscriptionImmersion::class, orphanRemoval: true)]
+    private Collection $inscriptions;
+
     public function __toString(): string {
         return $this->prenom . ' ' . $this->nom;
     }
@@ -61,6 +67,7 @@ class Visiteur
     public function __construct()
     {
         $this->visites = new ArrayCollection();
+        $this->inscriptions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -214,6 +221,36 @@ class Visiteur
     public function setEtudes(?string $etudes): static
     {
         $this->etudes = $etudes;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, InscriptionImmersion>
+     */
+    public function getInscriptions(): Collection
+    {
+        return $this->inscriptions;
+    }
+
+    public function addInscription(InscriptionImmersion $inscription): static
+    {
+        if (!$this->inscriptions->contains($inscription)) {
+            $this->inscriptions->add($inscription);
+            $inscription->setVisiteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInscription(InscriptionImmersion $inscription): static
+    {
+        if ($this->inscriptions->removeElement($inscription)) {
+            // set the owning side to null (unless already changed)
+            if ($inscription->getVisiteur() === $this) {
+                $inscription->setVisiteur(null);
+            }
+        }
 
         return $this;
     }
