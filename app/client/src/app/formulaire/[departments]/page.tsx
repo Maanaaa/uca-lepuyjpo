@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import InputField from '@/components/ui/forms/inputfield/inputfield';
 import SelectField from '@/components/ui/forms/selectfield/selectfield';
 import BackButton from '@/components/ui/backbutton/backButton';
+import { notFound } from 'next/navigation';
 import { COUNTRIES, DEPARTMENTS } from '@/constants/location';
 import styles from './inscription.module.scss';
 
@@ -17,25 +18,15 @@ export default function InscriptionPage() {
 
     // Si le paramètre dans l'URL n'est pas dans notre liste, on affiche un message d'erreur
     if (!VALID_DEPTS.includes(currentDept)) {
-        return (
-            <div className={styles.mainContainer}>
-                <div className={styles.formCard}>
-                    <h1 className={styles.title}>Dommage pour toi !</h1>
-                    <p className={styles.subtitle}>Inutile d'essayer d'inventer un nouveau département ;)</p>
-                    <a href="/departements" className={styles.submitBtn} style={{ textAlign: 'center', display: 'block', textDecoration: 'none' }}>
-                        Retour à l'accueil
-                    </a>
-                </div>
-            </div>
-        );
-    }
+            notFound();
+        }
 
     const [selectedCountry, setSelectedCountry] = useState('FR');
 
     const formatName = (name: string) => {
         // Si on ne met aucun nom, cela évite qu'on fasse planter le site
         if (!name) return "";
-        // Pour faire apparaître les noms avec un majuscule au début. Utile en cas de création de nouveau département. MMI est un acronyme donc on le met en majuscule en entier.
+        // Pour faire apparaître les noms avec un majuscule au début.
         return name === 'mmi' ? 'MMI' : name.charAt(0).toUpperCase() + name.slice(1);
     };
 
