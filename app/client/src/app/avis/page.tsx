@@ -10,18 +10,16 @@ export default function AvisPage() {
     const [comment, setComment] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
-
-    // On envoie les données à l'api symfo
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (rating === 0) return;
         setIsSubmitting(true);
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/avis`, {
+            const response = await fetch('/api/avis', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/ld+json',
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     note: rating,
@@ -32,7 +30,8 @@ export default function AvisPage() {
             if (response.ok) {
                 setSubmitted(true);
             } else {
-                const errorData = await response.json();
+                const text = await response.text();
+                const errorData = text ? JSON.parse(text) : {};
                 console.error("Erreur API :", errorData);
                 alert("Impossible d'envoyer l'avis pour le moment.");
             }

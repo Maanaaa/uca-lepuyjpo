@@ -25,6 +25,7 @@ services:
       - ./app/client:/app
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:8080
+      - INTERNAL_API_URL=http://api:80
       - WATCHPACK_POLLING=true
       - CHOKIDAR_USEPOLLING=true
     command: sh -c "npm install && npm run dev"
