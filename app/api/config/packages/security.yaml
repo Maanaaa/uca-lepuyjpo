@@ -24,6 +24,8 @@ security:
             logout:
                 path: app_logout
                 target: http://localhost:3000/connexion-admin
+                invalidate_session: true
+                delete_cookies: ['PHPSESSID']
 
     access_control:
         - { path: ^/api/admin-auth/login, roles: PUBLIC_ACCESS }
