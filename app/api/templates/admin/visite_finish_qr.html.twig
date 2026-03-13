@@ -1,0 +1,15 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block main %}
+    <div style="text-align: center; padding: 40px;">
+        <h1 class="text-danger"><i class="fa fa-qrcode"></i> Fin de visite</h1>
+        <p>Faites scanner ce code au visiteur pour qu'il puisse donner sa note.</p>
+
+        <div style="margin: 30px;">
+            <img src="https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl={{ url_avis|url_encode }}&choe=UTF-8" 
+                 alt="QR Code Avis" style="border: 5px solid #333; border-radius: 8px;">
+        </div>
+
+        <a href="{{ path('admin') }}" class="btn btn-primary">Retour à la liste</a>
+    </div>
+{% endblock %}

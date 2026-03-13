@@ -4,12 +4,15 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\VisiteRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Utilisateur;
 
 #[ORM\Entity(repositoryClass: VisiteRepository::class)]
 #[ApiResource(
-    mercure: true
+    //mercure: true
 )]
 class Visite
 {
@@ -18,23 +21,22 @@ class Visite
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)] // Ajoute TIME ici
     private ?\DateTime $debut = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)] // Ici aussi
     private ?\DateTime $fin = null;
 
     #[ORM\Column(length: 255)]
     private ?string $statut = null;
 
-    #[ORM\Column]
+    #[ORM\Column (nullable: true)]
     private ?int $note = null;
 
     #[ORM\Column]
     private ?int $visiteur_id = null;
 
-    #[ORM\Column]
-    private ?int $etudiant_id = null;
+
 
     #[ORM\ManyToOne(inversedBy: 'visites')]
     private ?Visiteur $visiteur = null;
@@ -43,8 +45,20 @@ class Visite
     #[ORM\JoinColumn(nullable: false)]
     private ?Departement $departement = null;
 
+    /**
+     * @var Collection<int, Utilisateur>
+     */
+    #[ORM\OneToMany(targetEntity: Utilisateur::class, mappedBy: 'visite')]
+    private Collection $utilisateurs;
+
     #[ORM\ManyToOne(inversedBy: 'visites')]
-    private ?Etudiant $etudiant = null;
+    private ?Utilisateur $etudiant = null;
+
+    public function __construct()
+    {
+        $this->utilisateurs = new ArrayCollection();
+    }
+
 
     public function getId(): ?int
     {
@@ -111,17 +125,6 @@ class Visite
         return $this;
     }
 
-    public function getEtudiantId(): ?int
-    {
-        return $this->etudiant_id;
-    }
-
-    public function setEtudiantId(int $etudiant_id): static
-    {
-        $this->etudiant_id = $etudiant_id;
-
-        return $this;
-    }
 
     public function getVisiteur(): ?Visiteur
     {
@@ -147,15 +150,46 @@ class Visite
         return $this;
     }
 
-    public function getEtudiant(): ?Etudiant
+    /**
+     * @return Collection<int, Utilisateur>
+     */
+    public function getUtilisateurs(): Collection
+    {
+        return $this->utilisateurs;
+    }
+
+    public function addUtilisateur(Utilisateur $utilisateur): static
+    {
+        if (!$this->utilisateurs->contains($utilisateur)) {
+            $this->utilisateurs->add($utilisateur);
+            $utilisateur->setVisite($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUtilisateur(Utilisateur $utilisateur): static
+    {
+        if ($this->utilisateurs->removeElement($utilisateur)) {
+            // set the owning side to null (unless already changed)
+            if ($utilisateur->getVisite() === $this) {
+                $utilisateur->setVisite(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getEtudiant(): ?Utilisateur
     {
         return $this->etudiant;
     }
 
-    public function setEtudiant(?Etudiant $etudiant): static
+    public function setEtudiant(?Utilisateur $etudiant): static
     {
         $this->etudiant = $etudiant;
 
         return $this;
     }
+
 }

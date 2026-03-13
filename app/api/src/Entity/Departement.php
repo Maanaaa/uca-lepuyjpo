@@ -7,9 +7,12 @@ use App\Repository\DepartementRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: DepartementRepository::class)]
 #[ApiResource]
+#[Vich\Uploadable]
 class Departement
 {
     #[ORM\Id]
@@ -36,12 +39,6 @@ class Departement
     private Collection $journeeImmersions;
 
     /**
-     * @var Collection<int, Etudiant>
-     */
-    #[ORM\OneToMany(targetEntity: Etudiant::class, mappedBy: 'departement')]
-    private Collection $etudiants;
-
-    /**
      * @var Collection<int, Visiteur>
      */
     #[ORM\OneToMany(targetEntity: Visiteur::class, mappedBy: 'departement')]
@@ -53,13 +50,25 @@ class Departement
     #[ORM\OneToMany(targetEntity: Utilisateur::class, mappedBy: 'departement')]
     private Collection $utilisateurs;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $pdf = null;
+
+    #[Vich\UploadableField(mapping: 'departement_pdfs', fileNameProperty: 'pdf')]
+    private ?File $pdfFile = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
     public function __construct()
     {
         $this->visites = new ArrayCollection();
         $this->journeeImmersions = new ArrayCollection();
-        $this->etudiants = new ArrayCollection();
         $this->visiteurs = new ArrayCollection();
         $this->utilisateurs = new ArrayCollection();
+    }
+
+    public function __toString(): string {
+        return $this->nom;
     }
 
     public function getId(): ?int
@@ -152,36 +161,6 @@ class Departement
     }
 
     /**
-     * @return Collection<int, Etudiant>
-     */
-    public function getEtudiants(): Collection
-    {
-        return $this->etudiants;
-    }
-
-    public function addEtudiant(Etudiant $etudiant): static
-    {
-        if (!$this->etudiants->contains($etudiant)) {
-            $this->etudiants->add($etudiant);
-            $etudiant->setDepartement($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEtudiant(Etudiant $etudiant): static
-    {
-        if ($this->etudiants->removeElement($etudiant)) {
-            // set the owning side to null (unless already changed)
-            if ($etudiant->getDepartement() === $this) {
-                $etudiant->setDepartement(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, Visiteur>
      */
     public function getVisiteurs(): Collection
@@ -239,5 +218,30 @@ class Departement
         }
 
         return $this;
+    }
+
+    public function getPdf(): ?string
+    {
+        return $this->pdf;
+    }
+
+    public function setPdf(?string $pdf): static
+    {
+        $this->pdf = $pdf;
+
+        return $this;
+    }
+
+    public function setPdfFile(?File $pdfFile = null): void
+    {
+        $this->pdfFile = $pdfFile;
+        if (null !== $pdfFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+
+    public function getPdfFile(): ?File
+    {
+        return $this->pdfFile;
     }
 }

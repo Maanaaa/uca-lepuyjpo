@@ -9,11 +9,34 @@ import styles from './admin-connexion.module.scss';
 export default function AdminLoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
     const router = useRouter();
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        router.push('/');
+        setLoading(true);
+        setError('');
+
+        try {
+            const response = await fetch('/api/proxy-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email, mdp: password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                window.location.href = 'http://localhost:8080/admin';
+            } else {
+                setError(data.error || 'Identifiants incorrects');
+            }
+        } catch (err) {
+            setError('Erreur technique (Proxy)');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -61,10 +84,9 @@ export default function AdminLoginPage() {
                                 required
                             />
                         </div>
-
-                        <button type="submit" className={styles.submitBtn}>
+                        <button type="submit" className={styles.submitBtn} disabled={loading}>
                             <LogIn size={20} />
-                            <span>Se connecter</span>
+                            <span>{loading ? 'Connexion...' : 'Se connecter'}</span>
                         </button>
                     </form>
                 </div>

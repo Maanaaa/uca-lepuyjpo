@@ -16,12 +16,15 @@ final class VisitorRegistrationController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $visite = $visitorManager->createFullRegistration($data);
+        // On récupère le tableau (visite + qrCode)
+        $result = $visitorManager->createFullRegistration($data);
+        $visite = $result['visite'];
+        $qrCode = $result['qrCode'];
 
         return $this->json([
             'message' => 'Visiteur inscrit et visite créée',
             'visiteId' => $visite->getId(),
-            'status' => $visite->getStatut() 
+            'qrCode' => $qrCode 
         ]);
     }
 }

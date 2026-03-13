@@ -45,9 +45,29 @@ class Visiteur
     #[ORM\JoinColumn(nullable: false)]
     private ?Departement $departement = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $Pays = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $departementOrigine = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $etudes = null;
+
+    /**
+     * @var Collection<int, InscriptionImmersion>
+     */
+    #[ORM\OneToMany(mappedBy: 'visiteur', targetEntity: InscriptionImmersion::class, orphanRemoval: true)]
+    private Collection $inscriptions;
+
+    public function __toString(): string {
+        return $this->prenom . ' ' . $this->nom;
+    }
+
     public function __construct()
     {
         $this->visites = new ArrayCollection();
+        $this->inscriptions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -165,6 +185,72 @@ class Visiteur
     public function setDepartement(?Departement $departement): static
     {
         $this->departement = $departement;
+
+        return $this;
+    }
+
+    public function getPays(): ?string
+    {
+        return $this->Pays;
+    }
+
+    public function setPays(?string $Pays): static
+    {
+        $this->Pays = $Pays;
+
+        return $this;
+    }
+
+    public function getDepartementOrigine(): ?int
+    {
+        return $this->departementOrigine;
+    }
+
+    public function setDepartementOrigine(?int $departementOrigine): static
+    {
+        $this->departementOrigine = $departementOrigine;
+
+        return $this;
+    }
+
+    public function getEtudes(): ?string
+    {
+        return $this->etudes;
+    }
+
+    public function setEtudes(?string $etudes): static
+    {
+        $this->etudes = $etudes;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, InscriptionImmersion>
+     */
+    public function getInscriptions(): Collection
+    {
+        return $this->inscriptions;
+    }
+
+    public function addInscription(InscriptionImmersion $inscription): static
+    {
+        if (!$this->inscriptions->contains($inscription)) {
+            $this->inscriptions->add($inscription);
+            $inscription->setVisiteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInscription(InscriptionImmersion $inscription): static
+    {
+        if ($this->inscriptions->removeElement($inscription)) {
+            // set the owning side to null (unless already changed)
+            if ($inscription->getVisiteur() === $this) {
+                $inscription->setVisiteur(null);
+            }
+        }
 
         return $this;
     }

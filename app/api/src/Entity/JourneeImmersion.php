@@ -33,14 +33,26 @@ class JourneeImmersion
     #[ORM\OneToMany(targetEntity: Cours::class, mappedBy: 'journeeImmersion')]
     private Collection $cours;
 
+    /**
+     * @var Collection<int, InscriptionImmersion>
+     */
+    #[ORM\OneToMany(mappedBy: 'journeeImmersion', targetEntity: InscriptionImmersion::class, orphanRemoval: true)]
+    private Collection $inscriptions;
+
     public function __construct()
     {
         $this->cours = new ArrayCollection();
+        $this->inscriptions = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function __toString(): string {
+        // Ex: "MMI - 12/03/2026"
+        return $this->departement->getNom() . ' - ' . $this->date->format('d/m/Y');
     }
 
     public function getDate(): ?\DateTime
@@ -103,6 +115,36 @@ class JourneeImmersion
             // set the owning side to null (unless already changed)
             if ($cour->getJourneeImmersion() === $this) {
                 $cour->setJourneeImmersion(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, InscriptionImmersion>
+     */
+    public function getInscriptions(): Collection
+    {
+        return $this->inscriptions;
+    }
+
+    public function addInscription(InscriptionImmersion $inscription): static
+    {
+        if (!$this->inscriptions->contains($inscription)) {
+            $this->inscriptions->add($inscription);
+            $inscription->setJourneeImmersion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInscription(InscriptionImmersion $inscription): static
+    {
+        if ($this->inscriptions->removeElement($inscription)) {
+            // set the owning side to null (unless already changed)
+            if ($inscription->getJourneeImmersion() === $this) {
+                $inscription->setJourneeImmersion(null);
             }
         }
 

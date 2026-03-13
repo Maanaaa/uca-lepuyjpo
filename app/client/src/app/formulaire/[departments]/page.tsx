@@ -1,24 +1,39 @@
 "use client";
 
-import { useState } from 'react';
-import { useParams, notFound } from 'next/navigation'; // Ajout de notFound
+import { useState, useEffect } from 'react';
 import InputField from '@/components/ui/forms/inputfield/inputfield';
 import SelectField from '@/components/ui/forms/selectfield/selectfield';
 import BackButton from '@/components/ui/backbutton/backButton';
+import { useParams, useRouter } from 'next/navigation';
 import { COUNTRIES, DEPARTMENTS } from '@/constants/location';
 import styles from './inscription.module.scss';
 
-const VALID_DEPTS = ['mmi', 'informatique', 'chimie'];
-
 export default function InscriptionPage() {
     const params = useParams();
+    const router = useRouter();
     const currentDept = params.departments as string;
+
+    const [selectedCountry, setSelectedCountry] = useState('FR');
+    const [loading, setLoading] = useState(false);
+    const [dbDepartments, setDbDepartments] = useState<any[]>([]);
+
+    useEffect(() => {
+        fetch("http://localhost:8080/api/departements")
+            .then(res => res.json())
+            .then(data => {
+                setDbDepartments(data['member'] || data['hydra:member'] || []);
+            })
+            .catch(err => console.error("Erreur API Departments:", err));
+    }, []);
+
+    const isValidDept = dbDepartments.some(d => 
+        d.slug?.toLowerCase() === currentDept.toLowerCase() || 
+        d.nom?.toLowerCase() === currentDept.toLowerCase()
+    );
 
     if (!VALID_DEPTS.includes(currentDept)) {
         notFound();
     }
-
-    const [selectedCountry, setSelectedCountry] = useState('FR');
 
     const formatName = (name: string) => {
         if (!name) return "";
@@ -35,7 +50,7 @@ export default function InscriptionPage() {
                     <h1 className={styles.title}>Inscription {deptName}</h1>
                     <p className={styles.subtitle}>Remplissez vos coordonnées pour continuer</p>
 
-                    <form className={styles.form}>
+                    <form className={styles.form} onSubmit={handleSubmit}>
                         <div className={styles.row}>
                             <InputField label="Nom" name="lastname" placeholder="Ex: Thévann" required />
                             <InputField label="Prénom" name="firstname" placeholder="Ex: MANYAPOFF" required />
@@ -65,11 +80,11 @@ export default function InscriptionPage() {
                             <div className={styles.emptySpace} />
                         )}
 
-                        <InputField label="Établissement / situation actuelle" name="school" placeholder="Lycée, Université, Travail..." required />
+                        <InputField label="Établissement actuel" name="school" placeholder="Lycée, Université..." required />
                         <InputField label="Études / filière actuelle" name="studies" placeholder="Terminale générale / BUT Informatique..." required />
 
-                        <button type="submit" className={styles.submitBtn}>
-                            Confirmer les informations
+                        <button type="submit" className={styles.submitBtn} disabled={loading}>
+                            {loading ? "Envoi..." : "Confirmer les informations"}
                         </button>
                     </form>
                 </div>

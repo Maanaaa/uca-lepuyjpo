@@ -1,16 +1,24 @@
 <?php
 
 namespace App\Controller;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class SecurityController extends AbstractController
+class SecurityController extends AbstractController
 {
-    #[Route('/api/login', name: 'api_login', methods: ['POST'])]
+    // Laisse cette route, même vide, ça évite que Symfony panique
+    #[Route(path: '/login', name: 'app_login')]
     public function login(): Response
     {
-        // Symfony intercepte cette requête tout seul
-        return $this->json(['message' => 'login ok']);
+
+        return $this->redirect('http://localhost:3000/connexion-admin');
+    }
+
+    #[Route(path: '/logout', name: 'app_logout', methods: ['GET'])]
+    public function logout(): void
+    {
+
     }
 }

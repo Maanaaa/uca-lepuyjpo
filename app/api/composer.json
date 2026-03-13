@@ -12,6 +12,9 @@
         "doctrine/doctrine-bundle": "^2.18",
         "doctrine/doctrine-migrations-bundle": "^3.7",
         "doctrine/orm": "^3.6",
+        "easycorp/easyadmin-bundle": "^5.0",
+        "endroid/qr-code": "^6.0",
+        "minishlink/web-push": "^10.0",
         "nelmio/cors-bundle": "^2.6",
         "phpdocumentor/reflection-docblock": "^5.6",
         "phpstan/phpdoc-parser": "^2.3",
@@ -29,7 +32,8 @@
         "symfony/serializer": "7.4.*",
         "symfony/twig-bundle": "7.4.*",
         "symfony/validator": "7.4.*",
-        "symfony/yaml": "7.4.*"
+        "symfony/yaml": "7.4.*",
+        "vich/uploader-bundle": "^2.9"
     },
     "config": {
         "allow-plugins": {
@@ -83,6 +87,9 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^4.3",
+        "phpunit/phpunit": "^12.5",
+        "symfony/browser-kit": "7.4.*",
+        "symfony/css-selector": "7.4.*",
         "symfony/maker-bundle": "^1.65"
     }
 }

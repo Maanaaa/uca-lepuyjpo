@@ -89,30 +89,30 @@ export default function ImmersionPage() {
     const prenom = searchParams.get('prenom') || 'visiteur';
 
     const handleConfirm = async () => {
-        if (!selectedDay || !visitorId) return;
+    if (!selectedDay || !visitorId) return;
 
-        try {
-            const response = await fetch("http://localhost:8080/api/inscription-immersion", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    vId: Number(visitorId),
-                    journeeId: selectedDay.id,  // ← AJOUTER ÇA !
-                    dept: currentDept
-                }),
-            });
+    try {
+        const response = await fetch("http://localhost:8080/api/inscription-immersion", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                vId: Number(visitorId),
+                journeeId: selectedDay.id,  // ← AJOUTER ÇA !
+                dept: currentDept
+            }),
+        });
 
-            const result = await response.json();
+        const result = await response.json();
 
-            if (response.ok) {
-                // Utilise le prénom de l'URL, pas celui de l'API
-                alert(`Super ${prenom} ! Ton immersion en ${formatName(currentDept)} est validée pour le ${formatDate(selectedDay.date)}.`);
-            } else {
-                alert("Erreur : " + (result.error || "Impossible de s'inscrire"));
-            }
-        } catch (err) {
-            console.error("Erreur lors de l'inscription immersion:", err);
+        if (response.ok) {
+        // Utilise le prénom de l'URL, pas celui de l'API
+        alert(`Super ${prenom} ! Ton immersion en ${formatName(currentDept)} est validée pour le ${formatDate(selectedDay.date)}.`);
+        } else {
+        alert("Erreur : " + (result.error || "Impossible de s'inscrire"));
         }
+    } catch (err) {
+        console.error("Erreur lors de l'inscription immersion:", err);
+    }
     };
 
 
