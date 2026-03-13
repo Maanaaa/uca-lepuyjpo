@@ -54,6 +54,10 @@ class AppCustomAuthenticator extends AbstractLoginFormAuthenticator
 
     protected function getLoginUrl(Request $request): string
     {
+        if (str_starts_with($request->getPathInfo(), '/admin')) {
+            return 'http://localhost:3000/connexion-admin';
+        }
         return $this->urlGenerator->generate(self::LOGIN_ROUTE);
     }
+
 }
