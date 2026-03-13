@@ -18,7 +18,6 @@ export default function AdminLoginPage() {
         setError('');
 
         try {
-            // On tape sur le proxy (même domaine, pas de CORS)
             const response = await fetch('/api/proxy-login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -28,13 +27,12 @@ export default function AdminLoginPage() {
             const data = await response.json();
 
             if (response.ok) {
-                // Redirection vers l'admin Symfony
                 window.location.href = 'http://localhost:8080/admin';
             } else {
                 setError(data.error || 'Identifiants incorrects');
             }
         } catch (err) {
-            setError('Erreur');
+            setError('Erreur technique (Proxy)');
         } finally {
             setLoading(false);
         }
