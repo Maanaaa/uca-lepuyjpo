@@ -7,6 +7,7 @@ import BackButton from '@/components/ui/backbutton/backButton';
 import { useParams, useRouter } from 'next/navigation';
 import { COUNTRIES, DEPARTMENTS } from '@/constants/location';
 import styles from './inscription.module.scss';
+import { getDepartements, registerVisitor } from '../../api';
 
 export default function InscriptionPage() {
     const params = useParams();
@@ -18,16 +19,13 @@ export default function InscriptionPage() {
     const [dbDepartments, setDbDepartments] = useState<any[]>([]);
 
     useEffect(() => {
-        fetch("http://localhost:8080/api/departements")
-            .then(res => res.json())
-            .then(data => {
-                setDbDepartments(data['member'] || data['hydra:member'] || []);
-            })
-            .catch(err => console.error("Erreur API Departments:", err));
+        getDepartements()
+            .then(data => setDbDepartments(data['member'] || data['hydra:member'] || []))
+            .catch(err => console.error("Erreur API:", err));
     }, []);
 
-    const isValidDept = dbDepartments.some(d => 
-        d.slug?.toLowerCase() === currentDept.toLowerCase() || 
+    const isValidDept = dbDepartments.some(d =>
+        d.slug?.toLowerCase() === currentDept.toLowerCase() ||
         d.nom?.toLowerCase() === currentDept.toLowerCase()
     );
 
@@ -59,8 +57,8 @@ export default function InscriptionPage() {
         const formData = new FormData(e.currentTarget);
         const rawData = Object.fromEntries(formData.entries()) as Record<string, string>;
 
-        const foundDept = dbDepartments.find(d => 
-            d.slug?.toLowerCase() === currentDept.toLowerCase() || 
+        const foundDept = dbDepartments.find(d =>
+            d.slug?.toLowerCase() === currentDept.toLowerCase() ||
             d.nom?.toLowerCase() === currentDept.toLowerCase()
         );
         const deptId = foundDept ? foundDept.id : null;
@@ -84,15 +82,9 @@ export default function InscriptionPage() {
         };
 
         try {
-            const response = await fetch("http://localhost:8080/api/register-visitor", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-            });
+            const data = await registerVisitor(payload);
 
-            if (response.ok) {
-                const data = await response.json();
-
+            if (data.visiteId) {
                 router.push(
                     `/page-qr/${currentDept}` +
                     `?nom=${encodeURIComponent(payload.nom)}` +
@@ -105,9 +97,8 @@ export default function InscriptionPage() {
             }
         } catch (err) {
             console.error(err);
-        } finally {
-            setLoading(false);
         }
+
     };
 
     return (

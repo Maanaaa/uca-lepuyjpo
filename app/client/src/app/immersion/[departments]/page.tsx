@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import BackButton from '@/components/ui/backbutton/backButton';
 import styles from './immersion.module.scss';
+import { getDepartements, getJourneeImmersions, postInscriptionImmersion } from '../../api';
 
 const VALID_DEPTS = ['mmi', 'informatique', 'chimie'];
 
@@ -21,51 +22,26 @@ export default function ImmersionPage() {
 
     // Charger les départements pour faire le mapping slug -> id
     useEffect(() => {
-        fetch("http://localhost:8080/api/departements")
-            .then(res => res.json())
+        getDepartements()
             .then(data => {
                 const members = data['member'] || data['hydra:member'] || [];
                 const map: Record<string, number> = {};
-
-                members.forEach((d: any) => {
-                    if (d.slug && typeof d.id === 'number') {
-                        map[d.slug] = d.id;
-                    }
-                });
-
+                members.forEach((d: any) => { if (d.slug) map[d.slug] = d.id; });
                 setDeptMap(map);
-            })
-            .catch(err => console.error("Erreur API Departments:", err));
+            });
     }, []);
 
     // Charger les immersions une fois qu'on a le mapping des départements
     useEffect(() => {
         if (!currentDept || !deptMap[currentDept]) return;
-
-        const targetId = deptMap[currentDept];
-
-        fetch("http://localhost:8080/api/journee_immersions")
-            .then(res => res.json())
+        getJourneeImmersions()
             .then(data => {
                 const allSessions = data['member'] || data['hydra:member'] || [];
                 const filtered = allSessions.filter((s: any) => {
-                    // Priorité au champ int departement_id (ton entité l'a)
-                    if (typeof s.departement_id !== 'undefined') {
-                        return s.departement_id === targetId;
-                    }
-                    // Fallback sur l'IRI de la relation
-                    if (typeof s.departement === 'string') {
-                        const match = s.departement.match(/\/departements\/(\d+)/);
-                        const deptIdFromIri = match ? Number(match[1]) : null;
-                        return deptIdFromIri === targetId;
-                    }
-                    return false;
+                    const targetId = deptMap[currentDept];
+                    return s.departement_id === targetId || s.departement?.includes(`/departements/${targetId}`);
                 });
                 setCurrentSessions(filtered);
-                setLoading(false);
-            })
-            .catch(err => {
-                console.error("Erreur immersion API:", err);
                 setLoading(false);
             });
     }, [currentDept, deptMap]);
@@ -98,32 +74,19 @@ export default function ImmersionPage() {
 
     const prenom = searchParams.get('prenom') || 'visiteur';
 
-    const handleConfirm = async () => {
+const handleConfirm = async () => {
     if (!selectedDay || !visitorId) return;
-
     try {
-        const response = await fetch("http://localhost:8080/api/inscription-immersion", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                vId: Number(visitorId),
-                journeeId: selectedDay.id,  // ← AJOUTER ÇA !
-                dept: currentDept
-            }),
+        const result = await postInscriptionImmersion({
+            vId: Number(visitorId),
+            journeeId: selectedDay.id,
+            dept: currentDept
         });
-
-        const result = await response.json();
-
-        if (response.ok) {
-        // Utilise le prénom de l'URL, pas celui de l'API
-        alert(`Super ${prenom} ! Ton immersion en ${formatName(currentDept)} est validée pour le ${formatDate(selectedDay.date)}.`);
-        } else {
-        alert("Erreur : " + (result.error || "Impossible de s'inscrire"));
-        }
+        alert(`Super ${prenom} ! Ton immersion est validée.`);
     } catch (err) {
-        console.error("Erreur lors de l'inscription immersion:", err);
+        console.error(err);
     }
-    };
+};
 
 
     return (

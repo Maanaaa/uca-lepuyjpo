@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LogIn, ArrowLeft } from 'lucide-react';
 import styles from './admin-connexion.module.scss';
+import { adminLogin } from '../api';
 
 export default function AdminLoginPage() {
     const [email, setEmail] = useState('');
@@ -18,21 +19,15 @@ export default function AdminLoginPage() {
         setError('');
 
         try {
-            const response = await fetch('/api/proxy-login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: email, mdp: password }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
+            const data = await adminLogin({ email, mdp: password });
+            
+            if (data && !data.error) {
                 window.location.href = 'http://localhost:8080/admin';
             } else {
                 setError(data.error || 'Identifiants incorrects');
             }
         } catch (err) {
-            setError('Erreur technique (Proxy)');
+            setError('Erreur technique');
         } finally {
             setLoading(false);
         }

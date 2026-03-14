@@ -5,6 +5,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { CheckCircle, Home, Map, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import styles from './page-qr.module.scss';
+import { PDF_BASE_URL } from '../../api';
 
 export default function PageQr() {
     const params = useParams();
@@ -26,8 +27,9 @@ export default function PageQr() {
     });
     const immersionLink = `${baseUrl}?${queryParams.toString()}`;
 
-    // On s'assure que le slug utilisé pour le PDF est en minuscules pour correspondre au serveur
-    const planPdfLink = `http://localhost:8080/plans/${departments.toLowerCase()}-plan.pdf`;
+    const planPdfLink = `${PDF_BASE_URL}/${departments.toLowerCase()}-plan.pdf`;
+
+
 
     return (
         <div className={styles.mainContainer}>
