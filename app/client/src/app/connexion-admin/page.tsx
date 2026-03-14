@@ -48,6 +48,21 @@ export default function AdminLoginPage() {
                         <h1 className={styles.title}>Administration JPO</h1>
                         <p className={styles.subtitle}>Accès réservé aux secrétaires et administrateurs</p>
                     </div>
+
+                    {/* Bloc d'aide pour les identifiants */}
+                    <div style={{ 
+                        backgroundColor: '#f0f7ff', 
+                        border: '1px solid #007bff', 
+                        borderRadius: '8px', 
+                        padding: '12px', 
+                        marginBottom: '20px', 
+                        fontSize: '0.85rem', 
+                        color: '#0056b3' 
+                    }}>
+                        <p style={{ margin: '0 0 8px 0' }}><strong>🎓 Étudiants :</strong> prenom.nom@etu.uca.fr / mdp: prenom.nom</p>
+                        <p style={{ margin: 0 }}><strong>🛠️ Test Admin :</strong> admin@jpo.fr / mdp: admin123</p>
+                    </div>
+
                     <form className={styles.form} onSubmit={handleLogin}>
                         {error && <div className={styles.errorMessage}>{error}</div>}
                         <div className={styles.inputGroup}>
