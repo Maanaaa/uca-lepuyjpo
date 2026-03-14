@@ -1,20 +1,9 @@
 const config = {
     // Pour les notifs
-    vapidKey: null,
-    mercureUrl: null,
-    mercureTopic: null
+    vapidKey: document.body.dataset.vapidKey,
+    mercureUrl: document.body.dataset.mercureUrl,
+    mercureTopic: document.body.dataset.mercureTopic
 };
-
-// Initialisation de la config depuis le DOM
-document.addEventListener('DOMContentLoaded', () => {
-    const configEl = document.getElementById('js-config');
-    if (configEl) {
-        config.vapidKey = configEl.dataset.vapidKey;
-        config.mercureUrl = configEl.dataset.mercureUrl;
-        config.mercureTopic = configEl.dataset.mercureTopic;
-        initMercure(); // On lance mercure une fois la config chargée
-    }
-});
 
 // Btn accepter / terminer
 window.forceAccept = function(btn) {
@@ -100,18 +89,16 @@ function urlBase64ToUint8Array(base64String) {
 }
 
 // Refresh auto avec mercure
-function initMercure() {
-    if (config.mercureUrl) {
-        const url = new URL(config.mercureUrl);
-        url.searchParams.append("topic", config.mercureTopic);
-        const eventSource = new EventSource(url);
+if (config.mercureUrl) {
+    const url = new URL(config.mercureUrl);
+    url.searchParams.append("topic", config.mercureTopic);
+    const eventSource = new EventSource(url);
 
-        eventSource.onmessage = event => {
-            if (document.querySelector(".action-busy") || document.querySelector(".swal2-container")) return;
-            const data = JSON.parse(event.data);
-            if (data.type === "NEW_VISITOR" && window.location.href.toLowerCase().includes("visite")) {
-                window.location.reload();
-            }
-        };
-    }
+    eventSource.onmessage = event => {
+        if (document.querySelector(".action-busy") || document.querySelector(".swal2-container")) return;
+        const data = JSON.parse(event.data);
+        if (data.type === "NEW_VISITOR" && window.location.href.toLowerCase().includes("visite")) {
+            window.location.reload();
+        }
+    };
 }
