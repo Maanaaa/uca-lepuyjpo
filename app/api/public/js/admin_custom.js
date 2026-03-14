@@ -1,8 +1,9 @@
+const configEl = document.getElementById('js-config');
+
 const config = {
-    // Pour les notifs
-    vapidKey: document.body.dataset.vapidKey,
-    mercureUrl: document.body.dataset.mercureUrl,
-    mercureTopic: document.body.dataset.mercureTopic
+    vapidKey: configEl ? configEl.dataset.vapidKey : null,
+    mercureUrl: configEl ? configEl.dataset.mercureUrl : null,
+    mercureTopic: configEl ? configEl.dataset.mercureTopic : null
 };
 
 // Btn accepter / terminer
@@ -12,8 +13,12 @@ window.forceAccept = function(btn) {
         const row = btn.closest("tr");
         vId = row ? row.getAttribute("data-id") : null;
     }
+
     const eId = btn.getAttribute("data-etudiant-id");
-    if (!vId) return alert("ID manquant");
+
+    if (!vId || !eId) {
+        return alert("Erreur : ID visite (" + vId + ") ou étudiant (" + eId + ") manquant");
+    }
 
     btn.innerHTML = '<i class="fa fa-spin fa-spinner"></i>';
     btn.classList.add("action-busy");
@@ -21,8 +26,21 @@ window.forceAccept = function(btn) {
     fetch("/api/visite/accept", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ visiteId: parseInt(vId), etudiantId: parseInt(eId) })
-    }).then(() => window.location.reload());
+        body: JSON.stringify({ 
+            visiteId: parseInt(vId), 
+            etudiantId: parseInt(eId) 
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            alert("Erreur lors de l'acceptation");
+            btn.innerHTML = 'Accepter';
+            btn.classList.remove("action-busy");
+        }
+    })
+    .catch(err => console.error("Erreur API:", err));
 };
 
 window.forceFinish = function(btn) {
