@@ -26,7 +26,8 @@ export default function PageQr() {
     });
     const immersionLink = `${baseUrl}?${queryParams.toString()}`;
 
-    const planPdfLink = `https://uca.fr/plans/${departments}-plan.pdf`;
+    // On s'assure que le slug utilisé pour le PDF est en minuscules pour correspondre au serveur
+    const planPdfLink = `http://localhost:8080/plans/${departments.toLowerCase()}-plan.pdf`;
 
     return (
         <div className={styles.mainContainer}>
@@ -67,7 +68,7 @@ export default function PageQr() {
                             <div className={styles.qrContainer}>
                                 <QRCodeSVG value={planPdfLink} size={160} level="H" includeMargin={true} />
                             </div>
-                            <p className={styles.qrInfo}>Scanne pour accéder au plan PDF du bâtiment</p>
+                            <p className={styles.qrInfo}>Scanne pour accéder au plan PDF de la visite</p>
                         </div>
                     </div>
 
