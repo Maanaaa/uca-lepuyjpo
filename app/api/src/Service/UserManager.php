@@ -5,12 +5,14 @@ namespace App\Service;
 use App\Entity\Utilisateur;
 use App\Repository\DepartementRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserManager
 {
     public function __construct(
         private EntityManagerInterface $em,
-        private DepartementRepository $deptRepo
+        private DepartementRepository $deptRepo,
+        private UserPasswordHasherInterface $passwordHasher 
     ) {}
 
     public function createStudent(array $data): Utilisateur
@@ -22,17 +24,23 @@ class UserManager
 
         $student = new Utilisateur();
         
-        // Génération de l'identifiant unique : prenom.nom
-        $identifiant = strtolower($data['prenom'] . '.' . $data['nom']);
-        $identifiant = str_replace(' ', '', $identifiant); 
+        // Génération de la base : prenom.nom
+        $baseIdentifiant = strtolower($data['prenom'] . '.' . $data['nom']);
+        $baseIdentifiant = str_replace(' ', '', $baseIdentifiant); 
 
-        $student->setEmail($identifiant); // L'identifiant sert de login
+        // L'email devient prenom.nom@etu.uca.fr
+        $email = $baseIdentifiant . '@etu.uca.fr';
+
+        $student->setEmail($email); 
         $student->setNom($data['nom']);
         $student->setPrenom($data['prenom']);
         $student->setRoles(['ROLE_USER']);
         $student->setIsDisponible(true);
         $student->setDepartement($departement);
-        $student->setPassword('none'); // Pas de mdp pour le login tablette étudiant
+        
+        // Le mot de passe devient "prenom.nom" haché
+        $hashedPassword = $this->passwordHasher->hashPassword($student, $baseIdentifiant);
+        $student->setPassword($hashedPassword);
 
         $this->em->persist($student);
         $this->em->flush();

@@ -24,9 +24,6 @@ class VisiteCrudController extends AbstractFilterableCrudController
 {
     public static function getEntityFqcn(): string { return Visite::class; }
 
-    /**
-     * FILTRE POUR LES ÉTUDIANTS
-     */
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);

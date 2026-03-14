@@ -1,17 +1,17 @@
 <?php
-
 namespace App\Controller\Admin;
 
 use App\Entity\Utilisateur;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Fields;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UtilisateurCrudController extends AbstractFilterableCrudController 
+class UtilisateurCrudController extends AbstractCrudController
 {
     private $passwordHasher;
 
@@ -20,56 +20,47 @@ class UtilisateurCrudController extends AbstractFilterableCrudController
         $this->passwordHasher = $passwordHasher;
     }
 
-    public static function getEntityFqcn(): string 
-    { 
-        return Utilisateur::class; 
+    public static function getEntityFqcn(): string
+    {
+        return Utilisateur::class;
     }
 
     public function configureFields(string $pageName): iterable
     {
-        yield EmailField::new('email');
-        yield TextField::new('nom');
-        yield TextField::new('prenom');
-        yield AssociationField::new('departement')->setRequired(true);
-        yield BooleanField::new('isDisponible', 'Disponible');
-        yield ChoiceField::new('roles')
-            ->allowMultipleChoices()
-            ->renderAsBadges()
-            ->setChoices([
-                'Administrateur Département' => 'ROLE_DEPT_ADMIN',
-                'Étudiant' => 'ROLE_USER',
-                'Super Administrateur' => 'ROLE_SUPER_ADMIN',
-            ]);
+        yield TextField::new('prenom', 'Prénom');
+        yield TextField::new('nom', 'Nom');
+        
+        // On affiche l'email mais on le rend facultatif au remplissage 
+        // car on va le générer nous-mêmes
+        yield TextField::new('email')->hideOnForm(); 
 
-        yield TextField::new('password', 'Mot de passe')
-            ->onlyOnForms()
-            ->setRequired($pageName === 'new');
+        yield AssociationField::new('departement');
+        
+        yield ChoiceField::new('roles')
+            ->setChoices(['Étudiant' => 'ROLE_USER', 'Admin' => 'ROLE_DEPT_ADMIN'])
+            ->allowMultipleChoices()
+            ->renderAsBadges();
+
+
     }
 
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
-        {
-            if ($entityInstance instanceof Utilisateur) {
-                $this->hashPassword($entityInstance);
-            }
-            parent::persistEntity($entityManager, $entityInstance);
-        }
+    {
+        if (!$entityInstance instanceof Utilisateur) return;
 
-        public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
-        {
-            if ($entityInstance instanceof Utilisateur) {
-                $this->hashPassword($entityInstance);
-            }
-            parent::updateEntity($entityManager, $entityInstance);
-        }
+        // Génération prenom.nom
+        $base = strtolower($entityInstance->getPrenom() . '.' . $entityInstance->getNom());
+        $base = str_replace(' ', '', $base);
 
-        private function hashPassword(Utilisateur $user): void
-        {
-            $plainPassword = $user->getPassword();
-            // On ne hache que si un mot de passe a été saisi
-            if (!empty($plainPassword)) {
-                $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
-                $user->setPassword($hashedPassword);
-            }
-        }
+        // email
+        $entityInstance->setEmail($base . '@etu.uca.fr');
 
+        // psswd auto (haché)
+        $hashedPassword = $this->passwordHasher->hashPassword($entityInstance, $base);
+        $entityInstance->setPassword($hashedPassword);
+
+        $entityInstance->setIsDisponible(true);
+
+        parent::persistEntity($entityManager, $entityInstance);
+    }
 }
