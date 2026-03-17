@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Users, Star, Calendar } from 'lucide-react';
+import BackButton from '@/components/ui/backbutton/backButton';
 import styles from './statistics.module.scss';
 
 export default function StatisticsPage() {
@@ -32,9 +33,7 @@ export default function StatisticsPage() {
 
                 const vList = vJson["member"] || vJson["hydra:member"] || [];
                 const aList = aJson["member"] || aJson["hydra:member"] || [];
-                const iList = iJson["member"] || iJson["hydra:member"] || [];
 
-                // Stats Géographiques (Fonctionne avec departementOrigine ou Ville)
                 const geoStats: Record<string, number> = {};
                 vList.forEach((v: any) => {
                     let code = "";
@@ -77,6 +76,9 @@ export default function StatisticsPage() {
     return (
         <div className={styles.container}>
             <header className={styles.header}>
+                <div className={styles.backButtonWrapper}>
+                    <BackButton />
+                </div>
                 <h1>Statistiques JPO</h1>
             </header>
 
