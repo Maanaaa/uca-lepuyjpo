@@ -8,6 +8,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { COUNTRIES, DEPARTMENTS } from '@/constants/location';
 import styles from './inscription.module.scss';
 import { getDepartements, registerVisitor } from '../../api';
+import NotFound from '@/not-found';
 
 export default function InscriptionPage() {
     const params = useParams();
@@ -31,15 +32,7 @@ export default function InscriptionPage() {
 
     if (!isValidDept) {
         return (
-            <div className={styles.mainContainer}>
-                <div className={styles.formCard}>
-                    <h1 className={styles.title}>Dommage pour toi !</h1>
-                    <p className={styles.subtitle}>Inutile d'essayer d'inventer un nouveau département ;)</p>
-                    <a href="/departements" className={styles.submitBtn} style={{ textAlign: 'center', display: 'block', textDecoration: 'none' }}>
-                        Retour à l'accueil
-                    </a>
-                </div>
-            </div>
+            <NotFound />
         );
     }
 

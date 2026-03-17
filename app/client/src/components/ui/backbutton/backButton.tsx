@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
-import styles from './backbutton.module.scss';
+import styles from './backButton.module.scss';
 
 export default function BackButton() {
     const router = useRouter();

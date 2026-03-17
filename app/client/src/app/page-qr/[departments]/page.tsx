@@ -29,8 +29,6 @@ export default function PageQr() {
 
     const planPdfLink = `${PDF_BASE_URL}/${departments.toLowerCase()}-plan.pdf`;
 
-
-
     return (
         <div className={styles.mainContainer}>
             <main className={styles.content}>

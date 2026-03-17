@@ -18,10 +18,10 @@ body {
   overflow-x: hidden;
   overflow-y: auto;
 
-  /* Scroll bloqué sur pc */
+  /* Scroll bloqué sur pc 
   @include mq('lg') {
     overflow: hidden;
-  }
+  }*/
 }
 
 body {

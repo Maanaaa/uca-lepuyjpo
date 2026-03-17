@@ -47,6 +47,7 @@ class DashboardController extends AbstractDashboardController
 
     public function configureAssets(): Assets
     {
+        
         return parent::configureAssets()
             ->addJsFile('https://cdn.jsdelivr.net/npm/sweetalert2@11')
             ->addJsFile('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js')
@@ -59,12 +60,21 @@ class DashboardController extends AbstractDashboardController
             ));
     }
 
+    
+
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Accueil', 'fa fa-home');
         yield MenuItem::linkToUrl('Alertes 🔔', 'fa fa-bell', 'javascript:subscribeToNotifications()');
 
         yield MenuItem::section('Structure')->setPermission('ROLE_DEPT_ADMIN');
+
+
+        yield MenuItem::linkToUrl(
+            'Statistiques',
+            'fa fa-chart-bar',
+            'http://localhost:3000/statistics'
+        );
 
         yield MenuItem::linkToUrl(
             'Départements',

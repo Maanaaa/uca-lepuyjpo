@@ -1,7 +1,7 @@
 .mainContainer {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    justify-content: center;
     flex: 1;
     padding: $space-md;
     position: relative;
@@ -68,7 +68,9 @@
     grid-template-columns: 1fr;
 
     @include mq('md') {
-        grid-template-columns: repeat(3, 1fr);
-        gap: $space-lg;
-    }
+            grid-template-columns: repeat(3, auto); 
+            justify-content: center; 
+            
+            gap: $space-lg;
+        }
 }

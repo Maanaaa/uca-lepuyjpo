@@ -46,7 +46,7 @@ export default function AdminLoginPage() {
                 <div className={styles.loginCard}>
                     <div className={styles.textHeader}>
                         <h1 className={styles.title}>Administration JPO</h1>
-                        <p className={styles.subtitle}>Accès réservé aux secrétaires et administrateurs</p>
+                        <p className={styles.subtitle}>Accès réservé aux secrétaires, administrateur et étudiants</p>
                     </div>
 
                     <div style={{ 

@@ -16,15 +16,9 @@ export default function HomePage() {
       icon: Monitor,
       path: "/departements"
     },
+
     {
-      title: "WebApp Accompagnateur",
-      desc: "Prise en charge et suivi des visiteurs",
-      subtitle: "Mobile / Tablette",
-      icon: Smartphone,
-      path: "/connexion-accompagnateur"
-    },
-    {
-      title: "Administration",
+      title: "Connexion panel",
       desc: "Statistiques, immersions et utilisateurs",
       subtitle: "PC Bureau / Portable",
       icon: Settings,

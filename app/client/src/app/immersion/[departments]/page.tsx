@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams, useSearchParams, notFound } from 'next/navigation';
 import BackButton from '@/components/ui/backbutton/backButton';
 import styles from './immersion.module.scss';
 import { getDepartements, getJourneeImmersions, postInscriptionImmersion } from '../../api';
@@ -46,18 +46,9 @@ export default function ImmersionPage() {
             });
     }, [currentDept, deptMap]);
 
+
     if (!VALID_DEPTS.includes(currentDept)) {
-        return (
-            <div className={styles.mainContainer}>
-                <div className={styles.formCard}>
-                    <h1 className={styles.title}>Aie Aie AIIIIIIIIIE !</h1>
-                    <p className={styles.subtitle}>L'espoir fait vivre mais... ce département n'existe point.</p>
-                    <a href="/departements" className={styles.submitBtn} style={{ textAlign: 'center', display: 'block', textDecoration: 'none' }}>
-                        Retour à l'accueil
-                    </a>
-                </div>
-            </div>
-        );
+        notFound();
     }
 
     const selectedDay = currentSessions.find(day => day.id === selectedId);

@@ -4,8 +4,6 @@ export async function POST(request: Request) {
     try {
         const body = await request.json();
 
-        // On utilise host.docker.internal pour sortir du conteneur Next 
-        // et atteindre le port 8080 exposé par ton conteneur Apache
         const symfonyRes = await fetch('http://host.docker.internal:8080/api/admin-auth/login', {
             method: 'POST',
             headers: { 
